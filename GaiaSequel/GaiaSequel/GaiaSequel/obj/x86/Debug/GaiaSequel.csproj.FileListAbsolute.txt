@@ -1,0 +1,13 @@
+c:\users\alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\obj\x86\Debug\ResolveAssemblyReference.cache
+c:\users\alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+c:\users\alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\GaiaSequel.exe
+c:\users\alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\GaiaSequel.pdb
+c:\users\alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\obj\x86\Debug\GaiaSequel.exe
+c:\users\alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\obj\x86\Debug\GaiaSequel.pdb
+C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text.xnb
+C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text2.xnb
+C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\GTILES.xnb
+C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Will.xnb
+C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\level0.gmaps
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\level1.gmaps
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\GTILES32.xnb
