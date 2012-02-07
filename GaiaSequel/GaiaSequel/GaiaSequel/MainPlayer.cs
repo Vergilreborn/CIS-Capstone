@@ -52,9 +52,13 @@ namespace GaiaSequel
         //Animation times and frame counters
         float windTimer = 0f;
         float walkTimer = 0f;
+        float jumpTimer = 0f;
+        float blinkingTimer = 0f;
+        int currJumpFrame = 0;
         int currWindFrame = 0;
         int currWalkFrame = 0;
         int windFrames = 3;
+        int jumpFrames = 5;
         int walkFrames = 4;
 
         //The sprite sheet for Will (Main Character)
@@ -131,7 +135,7 @@ namespace GaiaSequel
             posString = "Pos:(" + destRect.X + "," + destRect.Y + ") Sav:(" + savedPosition.X + "," + savedPosition.Y + ")";
             groundString = "On ground: " + touchingGround;
             jumpingString = "Jumping: " + jumping + "  JumpHeight: " + jumpHeight;
-            jumpVectorString = "Position: " + jumpYPosition;
+            jumpVectorString = "Position: " + jumpYPosition + "\nJumpFrame:" + currJumpFrame;
 
 
             //Get the dominate like if left is pressed first left is dominate
@@ -176,18 +180,26 @@ namespace GaiaSequel
                     mapDesign.loadNext(0);
 
             //Now to add the walking animations
-            if (walking && !jumping)
+            if (walking && !jumping){
                 walkingAnimation(time, walkDir);
-            else{
-                //reset standing position
+
+            //Else the sprite is doing nothing...check what position they are facing
+            //and make corresponding windAnimation;
+            }else if (!jumping && !walking && windBlowing){
+                windAnimation(time, walkDir);
+           
+            //reset standing position
+            }else{
                 currWalkFrame = 0;
                 sourceRect = new Rectangle(0, 42 * 2 * walkDir, 32 * 2, 42 * 2);
+                
             }
-            
+              
             //Now for the jumping motion and calculation
             //NEED TO ADD -animations
-            if (jumping){
-                jumpHeight += .75f;
+            if (jumping)
+            {
+                jumpHeight += .6f;
                 position.Y += jumpHeight;
                 jumpingAnimation(time, walkDir);
                 if (jumpHeight >= 0)
@@ -199,6 +211,8 @@ namespace GaiaSequel
                 if (jumpFalling)
                     touchingGround = onGround(jumpYPosition);
             }
+            else
+                currJumpFrame = 0;
 
             //time to the freefalling calculation
             //this is when we are falling and not falling from
@@ -215,10 +229,7 @@ namespace GaiaSequel
                     jumpHeight = -9;
                   }
 
-            //Else the sprite is doing nothing...check what position they are facing
-            //and make corresponding windAnimation;
-            if (!jumping && !walking && windBlowing)
-                windAnimation(time, walkDir);
+          
 
             //update the sprites position on the map.
             destRect.X = (int)position.X;
@@ -261,9 +272,28 @@ namespace GaiaSequel
 
         //This iss to play the jumping animation
         public void jumpingAnimation(GameTime timer, int direction){
-           // jumpTimer += (float)timer.ElapsedGameTime.Milliseconds;
-           
+           jumpTimer += (float)timer.ElapsedGameTime.Milliseconds;
+           if (jumpTimer > 60f){
+               currJumpFrame++;
+
+               if (this.jumpYPosition - this.position.Y < 40){
+                   if (this.jumpYPosition - this.position.Y  > 28)
+                       currJumpFrame = 1;
+                   else
+                       currJumpFrame = 0;
+               
+               }else if (currJumpFrame > jumpFrames - 1)
+               {
+                      currJumpFrame = 2;
+               }
+               jumpTimer = 0;
+            }
+           sourceRect = new Rectangle((currJumpFrame * 32 * 2) + 448, 42 * 2 * direction, 32 * 2, 42 * 2);
+        
         }
+
+     
+
 
         //This is for walkingAnimation
         //Same stuff as wind animation
@@ -276,6 +306,17 @@ namespace GaiaSequel
                 walkTimer = 0;
             }
             sourceRect = new Rectangle((currWalkFrame * 32 * 2) + 192, 42 * 2 * direction, 32 * 2, 42 * 2);
+        }
+        public void blinking(GameTime time,int multiplier, int direction){
+            if (direction != 3){
+                blinkingTimer += time.ElapsedGameTime.Milliseconds;
+                if (blinkingTimer > 10f){
+                    sourceRect = new Rectangle((direction * 32 * 2), 42 * 2 * 4, 32 * 2, 42 * 2);
+                    blinkingTimer = 0;
+                }
+            }
+
+
         }
 
         //This test if we are falling or jumping that we touch the same spot
@@ -317,8 +358,8 @@ namespace GaiaSequel
 
                 if (newState.IsKeyDown(Keys.Down) && !newState.IsKeyDown(Keys.Up)){
                     if (jumping){
-                        jumpYPosition += 1f;
-                        jumpHeight += .25f;
+                        jumpYPosition += .6f;
+                        jumpHeight += .1f;
                     }else{
 
                         savedPosition.Y = position.Y;
@@ -329,9 +370,10 @@ namespace GaiaSequel
                     }
                 
                 }else if (newState.IsKeyDown(Keys.Up) && !newState.IsKeyDown(Keys.Down)){
-                    if (jumping)
-                        jumpYPosition -= 1f;
-                    else{
+                    if (jumping){
+                        jumpYPosition -= 2f;
+                        jumpHeight -= .1f;
+                    }else{
 
                         savedPosition.Y = position.Y;
                         if (possibleCollision[0].isUsed && !jumping)
@@ -356,8 +398,8 @@ namespace GaiaSequel
                 
                 if (newState.IsKeyDown(Keys.Down) && !newState.IsKeyDown(Keys.Up)){
                     if (jumping){
-                        jumpYPosition += 1f;
-                        jumpHeight += .25f;
+                        jumpYPosition += .6f;
+                        jumpHeight += .1f;
                     }else{
                         savedPosition.Y = position.Y;
                     
@@ -368,9 +410,10 @@ namespace GaiaSequel
                     }
                 
                 }else if (newState.IsKeyDown(Keys.Up) && !newState.IsKeyDown(Keys.Down)){
-                    if (jumping)
-                        jumpYPosition -= 1f;
-                    else{
+                    if (jumping){
+                        jumpYPosition -= 2f;
+                        jumpHeight -= .1f;
+                    }else{
                         savedPosition.Y = position.Y;
                         if (possibleCollision[0].isUsed && !jumping)
                             position.Y = savedPosition.Y;
@@ -384,9 +427,11 @@ namespace GaiaSequel
             if (dominateKey == Keys.Up && newState.IsKeyDown(Keys.Up) &&!newState.IsKeyDown(Keys.Down)){
                 walking = true; walkDir = 3;
 
-                if (jumping)
-                    jumpYPosition -= 1f;
-                else{
+                if (jumping){
+                    jumpYPosition -= 2f;
+                    jumpHeight -= .1f;
+                   
+                }else{
                     savedPosition.Y = position.Y;
                     if (possibleCollision[0].isUsed && !jumping)
                         position.Y = savedPosition.Y;
@@ -413,8 +458,8 @@ namespace GaiaSequel
             if (dominateKey == Keys.Down && newState.IsKeyDown(Keys.Down) && !newState.IsKeyDown(Keys.Up)){
                 walking = true; walkDir = 0; 
                 if (jumping){
-                    jumpYPosition += 1f;
-                    jumpHeight += .25f;
+                    jumpYPosition += .6f;
+                    jumpHeight += .1f;
                 }else{
                     savedPosition.Y = position.Y;
                     if (possibleCollision[1].isUsed)

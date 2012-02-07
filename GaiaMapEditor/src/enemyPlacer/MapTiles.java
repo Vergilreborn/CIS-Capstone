@@ -1,12 +1,14 @@
 package enemyPlacer;
 import javax.swing.*;
-import java.util.*;
+
 import java.awt.*;
 import java.awt.image.*;
 
 public class MapTiles extends JPanel{
 
 	
+
+	private static final long serialVersionUID = 1L;
 	Image croppedImage = null;
 	Image tile;
 	Image nullImage;
@@ -39,6 +41,8 @@ public class MapTiles extends JPanel{
 		
 		croppedImage = createImage(new FilteredImageSource(tile.getSource(),
 				   new CropImageFilter(tilePositionX,tilePositionY,16,16)));
+		
+		this.repaint(this.getLocation().x,this.getLocation().y,16,16);
 		update(getGraphics());
 		
 

@@ -14,6 +14,7 @@ public class MapMaker extends JFrame{
 
 	//this is just the background color
 	JPanel background;
+	JPanel newBack;
 
 	int i = 0;
 	
@@ -36,7 +37,7 @@ public class MapMaker extends JFrame{
 	public static void main(String [] args) throws Exception{
 		
 		
-		new MapMaker("Gaia Map Editor v1.3");
+		new MapMaker("Gaia Map Editor v1.4");
 
 		
 	}
@@ -62,6 +63,10 @@ public class MapMaker extends JFrame{
 		//want to
 		background.setLayout(null);
 	
+		newBack = new JPanel();
+		newBack.setBackground(new Color(0,0,0));
+		newBack.setLayout(null);
+		newBack.setLocation(5,5);
 		//initiate the filechooser 
 		
 		
@@ -202,6 +207,7 @@ public class MapMaker extends JFrame{
 		
 		
 		//add all the buttons
+		background.add(newBack);
 		background.add(topLeftStair);
 		background.add(topRightStair);
 		background.add(rightStair);
@@ -278,10 +284,13 @@ public class MapMaker extends JFrame{
 				int returnValue = fileChooser.showOpenDialog(null);
 				if(returnValue == JFileChooser.APPROVE_OPTION){
 					try{
+					
 					options.loadFile(fileChooser.getSelectedFile().getAbsolutePath(), tableTiles,colTiles);
-					background.revalidate();
-					background.update(getGraphics());
-					background.repaint();
+				
+		
+					newBack.update(newBack.getGraphics());
+					newBack.repaint();
+					
 					}catch(FileNotFoundException fnfe){
 					}
 					
@@ -435,22 +444,24 @@ public class MapMaker extends JFrame{
 		//create collision tiles that will be above the editable map tiles
 		for(int y= 0; y < 38; y++){
 			for(int x = 0; x < 48; x++){
-				tableTiles[y][x] = new EditTile(new ImageIcon("GTILES.png").getImage(),new Point(5,5),x,y);
+				tableTiles[y][x] = new EditTile(new ImageIcon("GTILES.png").getImage(),new Point(0,0),x,y);
 				tableTiles[y][x].setNullImage(new ImageIcon("null.png").getImage());
 				tableTiles[y][x].setNull();
 				colTiles[y][x] = new CollisionTiles(16,tableTiles[y][x].getLocation());
+				colTiles[y][x].addMouseFunction(selected,tableTiles[y][x],newBack);
 				colTiles[y][x].setBackground(new Color(0,0,0,0));
-				colTiles[y][x].addMouseFunction(selected,tableTiles[y][x],background);
+				//colTiles[y][x].addMouseFunction(selected,tableTiles[y][x],background);
 			
 				//places the colTiles ontop the tableTiles
-				background.add(colTiles[y][x]);
-				background.add(tableTiles[y][x]);	
-			
+				//background.add(colTiles[y][x]);
+				//background.add(tableTiles[y][x]);	
+				newBack.add(colTiles[y][x]);
+				newBack.add(tableTiles[y][x]);
 				
 			}
 			
 		}
-		//paint the background when everything is done.
-		//background.repaint();	
+		newBack.setSize((48*16),(38*16));
+	
 	}	
 }

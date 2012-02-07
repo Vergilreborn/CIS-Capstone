@@ -16,20 +16,23 @@ public class EnemyPlacerMain extends JFrame{
 
 	public static void main(String [] args){
 		
-		try{
+	try{
 		new EnemyPlacerMain();
 		}catch(Exception e){
-		System.err.println("Error broken, something is not working");	
+		System.err.println("Broken ERROR" + "\n" + e);	
+		
 		
 		}
 	}
 	
 	//Global Variables
 	JPanel background;
+	JPanel mapHolding;
 	JPanel listHolding;
 	JPanel enemies;
 	JPanel items;
 	JPanel npc;
+	JPanel objects;
 	FileOptions fo = new FileOptions();
 	JFileChooser fileChooser = new JFileChooser();
 	StandardButton remove;
@@ -37,7 +40,11 @@ public class EnemyPlacerMain extends JFrame{
 	StandardButton loadMapOnly;
 	StandardButton loadMapWithEnemies;
 	StandardButton saveMapWithEnemies;
+	SelectingTiles selector;
 	JList list;
+	Items itemSet;
+	Npcs npcSet;
+	Enemies enemySet;
 	ArrayList<String> data;
 	DefaultListModel listData;
 	MapTiles [][] mapTiles = new MapTiles[38][48];
@@ -54,6 +61,7 @@ public class EnemyPlacerMain extends JFrame{
 		this.setSize(1340,720);
 		this.setResizable(false);
 		
+		
 		fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Gaia Maps", "gmaps"));
 		
@@ -62,6 +70,12 @@ public class EnemyPlacerMain extends JFrame{
 		background.setSize(this.getSize());
 		background.setBackground(new Color(0,0,240));
 		background.setLayout(null);
+		
+		mapHolding = new JPanel();
+		mapHolding.setLayout(null);
+		mapHolding.setBackground(new Color(0,0,0));
+		mapHolding.setLocation(560,5);
+		mapHolding.setSize(48*16,38*16);
 	
 		listHolding = new JPanel();
 		listHolding.setBackground(background.getBackground());
@@ -72,7 +86,25 @@ public class EnemyPlacerMain extends JFrame{
 		itemEnemyNpc.setBackground(background.getBackground());
 		itemEnemyNpc.setLocation(new Point(5,5));
 		itemEnemyNpc.setSize(550,385);
+				
+		//enemies
+		enemySet = new Enemies(new ImageIcon("EnemiesUpdate.png").getImage());
+		itemSet = new Items(new ImageIcon("Items.png").getImage());	
+		npcSet = new Npcs(new ImageIcon("NPC.png").getImage());
+		//Selecting
+				
 		
+		selector = new SelectingTiles('n',
+										new ImageIcon("Items.png").getImage(),
+										new ImageIcon("EnemiesUpdate.png").getImage(),
+									    new ImageIcon("NPC.png").getImage(),
+										new ImageIcon("Objects").getImage(),
+										enemySet,itemSet,npcSet);
+		
+		
+		selector.setBackground(new Color(255,255,255));
+		selector.setLocation(300,548);
+		selector.setBorder(BorderFactory.createLineBorder(new Color(0,0,0),2));
 		
 		//Setting up the buttons
 		remove = new StandardButton("Remove");
@@ -97,15 +129,24 @@ public class EnemyPlacerMain extends JFrame{
 		
 		enemies = new JPanel();
 		enemies.setSize(itemEnemyNpc.getSize());
+		enemies.setLayout(null);
+		enemies.setBackground(new Color(180,180,180));
 		
+		objects = new JPanel();
+		objects.setSize(itemEnemyNpc.getSize());
+		objects.setLayout(null);
+		objects.setBackground(new Color(180,180,180));
 		
 				
 		npc = new JPanel();
 		npc.setSize(itemEnemyNpc.getSize());
+		npc.setLayout(null);
+		npc.setBackground(new Color(180,180,180));
 		
 		items = new JPanel();
 		items.setSize(itemEnemyNpc.getSize());
-		
+		items.setLayout(null);
+		items.setBackground(new Color(180,180,180));
 		//We need to design the "Map Tiles" to show the map
 		//we will also show the collision if the collision is checked
 		setUpWindows();
@@ -118,22 +159,31 @@ public class EnemyPlacerMain extends JFrame{
 		tabs.addTab("Items",items);
 		tabs.addTab("Enemies",enemies);
 		tabs.addTab("NPC",npc);
+		tabs.addTab("Objects",objects);
 		
 		tabs.addChangeListener(new ChangeListener(){
 			public void stateChanged(ChangeEvent arg0) {
 				items.update(items.getGraphics());
+				items.repaint();
+				enemies.update(enemies.getGraphics());
+				enemies.repaint();
 				enemies.update(enemies.getGraphics());
 				npc.update(npc.getGraphics());
+				npc.repaint();
 				
 		}});
 		
-		
+		buildEnemies();
+		buildItems();
+		buildNpc();
 		
 		itemEnemyNpc.add(tabs);
 		
 		
 		//Add everything to the Main Panel
+		background.add(mapHolding);
 		background.add(remove);
+		background.add(selector);
 		background.add(highlight);
 		background.add(loadMapOnly);
 		background.add(loadMapWithEnemies);
@@ -149,9 +199,52 @@ public class EnemyPlacerMain extends JFrame{
 		background.repaint();
 		this.validate();
 		this.validateTree();
-		this.update(getGraphics());
+
 		this.repaint();
+		this.update(getGraphics());
 		this.setVisible(true);
+		
+	}
+	
+	public void buildItems(){
+		
+		
+		for(int i = 0; i < itemSet.item.length; i++){
+			
+			itemSet.item[i].setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
+			items.add(itemSet.item[i]);
+			itemSet.item[i].addMouse();
+			itemSet.item[i].connect(selector);
+		}
+		items.validate();
+	}
+	
+	public void buildEnemies(){
+
+		
+		
+		for(int i = 0; i < enemySet.enemies.length; i++){
+			
+			enemySet.enemies[i].setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
+			enemies.add(enemySet.enemies[i]);
+			enemySet.enemies[i].addMouse();
+			enemySet.enemies[i].connect(selector);
+		}
+		enemies.validate();
+		
+	}
+	public void buildNpc(){
+
+		
+		
+		for(int i = 0; i < npcSet.npcPeople.length; i++){
+			
+			npcSet.npcPeople[i].setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
+			npc.add(npcSet.npcPeople[i]);
+			npcSet.npcPeople[i].addMouse();
+			npcSet.npcPeople[i].connect(selector);
+		}
+		npc.validate();
 		
 	}
 	
@@ -186,12 +279,13 @@ public class EnemyPlacerMain extends JFrame{
 		//Rebuilding map area
 		for(int y = 0; y < 38; y++ ){
 			for(int x = 0; x < 48; x++){
-				mapTiles[y][x] = new MapTiles(spriteSheet,new Point(560 + (16*x),5 + (16*y)),-1,-1,'n',img);
+				mapTiles[y][x] = new MapTiles(spriteSheet,new Point( (16*x), (16*y)),-1,-1,'n',img);
 				mapTiles[y][x].setNull();
-				colTiles[y][x] = new CollisionTiles(16,new Point((560 + (16*x)),5 + (16*y)));
+				colTiles[y][x] = new CollisionTiles(16,new Point(((16*x)),(16*y)));
 				mapTiles[y][x].connect(colTiles[y][x]);
-				background.add(colTiles[y][x]);
-				background.add(mapTiles[y][x]);
+				mapHolding.add(colTiles[y][x]);
+				mapHolding.add(mapTiles[y][x]);
+				
 			
 			}
 		}
@@ -217,9 +311,10 @@ public class EnemyPlacerMain extends JFrame{
 				if(returnValue == JFileChooser.APPROVE_OPTION){
 					try{
 						fo.loadFile(fileChooser.getSelectedFile().getAbsolutePath(), mapTiles, colTiles);		
-						background.revalidate();
-						background.update(getGraphics());
-						background.repaint();
+						//background.revalidate();
+						mapHolding.repaint();
+						mapHolding.update(mapHolding.getGraphics());
+						
 					}catch(FileNotFoundException fnfe){
 						System.err.println("Error Occured Loading Map");
 					}
@@ -248,6 +343,7 @@ public class EnemyPlacerMain extends JFrame{
 		
 		
 	}
+	
 	
 	
 }

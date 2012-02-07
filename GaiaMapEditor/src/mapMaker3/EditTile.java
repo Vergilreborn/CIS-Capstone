@@ -81,6 +81,8 @@ public class EditTile extends JPanel {
 		isNull = false;
 		croppedImage = crpImg;
 		this.tile = tile;
+	
+
 		
 	}
 	
@@ -104,13 +106,14 @@ public class EditTile extends JPanel {
 		this.tile.y = tileY;
 		int x = (tileX * tile.size);
 		int y = (tileY* tile.size);
+		croppedImage = createImage(new FilteredImageSource(img.getSource(),
+				   new CropImageFilter(x,y,tile.size,tile.size)));
 		
-		
+		this.repaint(this.getLocation().x, this.getLocation().y, 16,16);
 		update(getGraphics());
 		
 		//Now to crop the image we want
-		croppedImage = createImage(new FilteredImageSource(img.getSource(),
-								   new CropImageFilter(x,y,tile.size,tile.size)));
+		
 		//this.update(getGraphics());
 	}
 }

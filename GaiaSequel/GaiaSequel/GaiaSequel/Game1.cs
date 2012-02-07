@@ -33,6 +33,7 @@ namespace GaiaSequel
         bool hideMap = false;
         bool normal = false;
         bool stats = false;
+        bool paused = false;
         bool needDarkBack = false;
 
         public Game1()
@@ -109,6 +110,11 @@ namespace GaiaSequel
             if (current.IsKeyDown(Keys.Back) && prevState.IsKeyUp(Keys.Back))
                 this.Exit();
 
+            if (current.IsKeyDown(Keys.Enter) && prevState.IsKeyUp(Keys.Enter))
+                if (paused)
+                    paused = false;
+                else
+                    paused = true;
             //this will let use hide the print statements
             if (current.IsKeyDown(Keys.OemTilde) && prevState.IsKeyUp(Keys.OemTilde))
                 if (hidePrint)
@@ -144,12 +150,14 @@ namespace GaiaSequel
             //update the previous keystate
             prevState = current;
 
-            //update the player
-            player.update(current, gameTime);
-            
-            //update the camera
-            cam.Update(gameTime);
-                
+            if (!paused)
+            {
+                //update the player
+                player.update(current, gameTime);
+
+                //update the camera
+                cam.Update(gameTime);
+            }
             //also update the fonts position
             fontPosition = new Vector2(player.position.X + 100, player.position.Y - 100);
 
