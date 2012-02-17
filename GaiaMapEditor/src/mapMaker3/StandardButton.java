@@ -3,7 +3,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import javax.swing.*;
 
-
+//This is for displaying custom buttons
 public class StandardButton extends JButton {
 
 	

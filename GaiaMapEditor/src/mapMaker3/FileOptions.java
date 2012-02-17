@@ -6,7 +6,6 @@ public class FileOptions {
 
 	File currFile;
 	
-	
 	public FileOptions(){
 		
 		
@@ -46,16 +45,13 @@ public class FileOptions {
 		int position = 0;
 		String xS = "";
 		while(size.charAt(position) != ','){
-	//		if(size.charAt(position) == '['){
-	//			position ++;
-	//			continue;
-	//		}
+	
 			xS += size.charAt(position);
 			position++;
 		}
 		position++;
 		String yS = "";
-		//while(position < size.length() && size.charAt(position) != ']'){
+		
 		while(position<size.length()){
 			yS += size.charAt(position);
 			position ++;
@@ -86,10 +82,6 @@ public class FileOptions {
 			
 			// this gets tileX
 			while(nl.charAt(position) != ','){
-				//if(nl.charAt(position) == '('){
-				//	position ++;
-				//	continue;
-				//}
 				tileX += nl.charAt(position);
 				position++;
 			}

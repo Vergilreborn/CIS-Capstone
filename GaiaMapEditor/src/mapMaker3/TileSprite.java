@@ -4,10 +4,10 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
 
+
+//This is the sprites that shows the images of the map
+//These change when clicked on according to the item selected
 public class TileSprite extends JPanel{
-
-	
-
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,9 +25,6 @@ public class TileSprite extends JPanel{
 	
 	//Image to be cropped and also the cropped image
 	Image img;
-	
-	
-	
 	Image croppedImage;
 	
 	public TileSprite(){

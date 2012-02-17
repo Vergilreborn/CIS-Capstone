@@ -8,8 +8,6 @@ import javax.swing.*;
 
 public class EditTile extends JPanel {
 
-	
-
 
 	private static final long serialVersionUID = 1L;
 
@@ -30,11 +28,13 @@ public class EditTile extends JPanel {
 	Image croppedImage;
 	Image nullImage;
 	JPanel collisionColor;
+
+	
 	//Information is like the TileSprite class so send it to the constructor of that
 	public EditTile(Image spriteSheet,Point placement,int tilePosX,int tilePosY){
 		this.setLayout(null);
-	
 		
+		//Designs a new tile
 		tile = new Tile(tilePosX, tilePosY, 16);
 		
 		//Stores image
@@ -81,12 +81,9 @@ public class EditTile extends JPanel {
 		isNull = false;
 		croppedImage = crpImg;
 		this.tile = tile;
-	
-
-		
 	}
 	
-	
+	//This is the tostring when printing out the location of the tiles
 	public String toString(){
 	
 		return "" + tile.toString() + "," + (this.getLocation().x -5)+ "," + (this.getLocation().y-5)+"";
@@ -94,11 +91,12 @@ public class EditTile extends JPanel {
 	}
 	
 	public void paintComponent(Graphics g){
-	
 		g.drawImage(croppedImage,0,0,null);
-	
 	}
 
+	
+	//This method rebuilds the tile when reading a file.
+	//It will change it according to the tile numbers given
 	public void rebuild(int tileX, int tileY) {
 		
 		isNull = false;
@@ -111,9 +109,5 @@ public class EditTile extends JPanel {
 		
 		this.repaint(this.getLocation().x, this.getLocation().y, 16,16);
 		update(getGraphics());
-		
-		//Now to crop the image we want
-		
-		//this.update(getGraphics());
 	}
 }

@@ -40,6 +40,8 @@ public class CollisionTiles extends JPanel{
 		//'s' = leftStairs 
 		//'u' = upperleftstairs(top of stairs)
 		//'i' = upperrightstairs(top of sairs) 
+		//'j' = jumpTop
+		//'m' = jumpBottom
 		switch(collisionType){
 		case 'w': this.setBackground(new Color(255,0,0,80));break;
 		case 'e': this.setBackground(new Color(0,255,0,80));break;
@@ -50,10 +52,17 @@ public class CollisionTiles extends JPanel{
 		case 's': this.setBackground(new Color(190,186,20,100)); break;
 		case 'u': this.setBackground(new Color(240,244,44,100)); break;
 		case 'i': this.setBackground(new Color(57,240,240,100)); break;
+		case 'j': this.setBackground(new Color(232,158,23,100)); break;
+		case 'm': this.setBackground(new Color(154,106,16,100)); break;
 		}
 	}
+	
+	//This adds the functionality of when the mouse is clicked. It will test to see if the mouse is dragged
+	//and if it is it will check to see what the collision type is and according to that will update
+	//the sprites
 	public void addMouseFunction(final SelectedTile select, final EditTile edit,final JPanel background){
 		addMouseListener(new MouseAdapter(){
+			//Tests to see if the mouse button is pressed down
 			public void mousePressed(MouseEvent me){
 				select.readyDrag = true;
 				if((select.isCollOnly)){
@@ -61,8 +70,6 @@ public class CollisionTiles extends JPanel{
 					updateTile(select.collChar);
 					thisSprite.validate();
 					thisSprite.repaint();
-				
-					
 				}
 				if(select.isImageOnly){
 					edit.changeTile(select.croppedImage,select.tile);
@@ -72,9 +79,12 @@ public class CollisionTiles extends JPanel{
 						thisSprite.getWidth(), thisSprite.getHeight());
 			
 			}
+			//The drag is null because nothing is being clicked/held in
 			public void mouseReleased(MouseEvent me){
 				select.readyDrag = false;
 			}
+			//checks to see if the mouse is entered the field of this current sprite
+			//then it edits it to whatever the right drawing spec is.
 			public void mouseEntered(MouseEvent me){
 				if(select.readyDrag){
 					if((select.isCollOnly)){					

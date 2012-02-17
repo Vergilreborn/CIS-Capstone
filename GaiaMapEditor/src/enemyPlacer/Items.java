@@ -5,6 +5,7 @@ import java.awt.Image;
 public class Items {
 
 	Item [] item = new Item [51];
+	String [] itemList = new String[51];
 	
 	//The hard coded enemies list
 	public Items(Image img){
@@ -70,6 +71,7 @@ public class Items {
 		for(int i = 0; i < item.length;i++){
 			item[i].setItemNumber(i);
 			item[i].connectArray(item);
+			itemList[i] = item[i].type;
 		}
 	}
 }

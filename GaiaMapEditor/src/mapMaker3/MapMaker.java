@@ -7,6 +7,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 
+//This is the map maker class which designs and displays the
+//functioning map maker. 
+//Next Update
+//   Add 4 more collision types
+//   Add the ability to increase the size of the map
+//   Add a help button that displays a text explaining
+//                   how this map editor is used
 public class MapMaker extends JFrame{
 
 	
@@ -182,25 +189,37 @@ public class MapMaker extends JFrame{
 		topRightStair.setLocation(560,670);
 		topRightStair.setSize(20,20);
 		
+		StandardButton jumpTop = new StandardButton(new Color(232,158,23),new Color(200,134,23)
+															  ,new Color(200,140,23), new Color(190,130,23));
+		jumpTop.setLocation(630,641);
+		jumpTop.setSize(20,20);
+		
+		StandardButton jumpBottom = new StandardButton(new Color(154,106,16),new Color(134,86,16)
+		                                              ,new Color(120,80,16), new Color(110,70,16));
+		jumpBottom.setLocation(660,641);
+		jumpBottom.setSize(20,20);
+		
+
+		
 		//Creates radioButtons for what the user would like to use..as in change
 		//this would result in collisions, images or both
 		final JRadioButton imageOnly = new JRadioButton("Image Only", true);
-		imageOnly.setLocation(650,650);
-		imageOnly.setSize(120,15);
+		imageOnly.setLocation(690,650);
+		imageOnly.setSize(90,15);
 		imageOnly.setVisible(true);
 		imageOnly.setBackground(background.getBackground());
 		imageOnly.setForeground(Color.white);
 		
 		final JRadioButton collOnly = new JRadioButton("Collision Only", false);
-		collOnly.setLocation(650,635);
-		collOnly.setSize(120,15);
+		collOnly.setLocation(690,635);
+		collOnly.setSize(90,15);
 		collOnly.setVisible(true);
 		collOnly.setBackground(background.getBackground());
 		collOnly.setForeground(Color.white);
 		
 		final JRadioButton bothOnly = new JRadioButton("Both", false);
-		bothOnly.setLocation(650,665);
-		bothOnly.setSize(120,15);
+		bothOnly.setLocation(690,665);
+		bothOnly.setSize(90,15);
 		bothOnly.setVisible(true);
 		bothOnly.setBackground(background.getBackground());
 		bothOnly.setForeground(Color.white);
@@ -226,6 +245,9 @@ public class MapMaker extends JFrame{
 		background.add(ladder);
 		background.add(land);
 		background.add(water);
+		background.add(jumpTop);
+		background.add(jumpBottom);
+
 		
 		
 		//changes the selected tile to a null tile which will allow to 
@@ -326,6 +348,9 @@ public class MapMaker extends JFrame{
 				selected.isImageOnly = false;
 				selected.isCollOnly = true;
 		}});
+		
+		//The next few lines of codes updates the collision type
+		//when the according buttons are pressed
 		topRightStair.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				selected.updateColl('i');
@@ -369,8 +394,20 @@ public class MapMaker extends JFrame{
 			
 		}});
 		
+		jumpTop.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				selected.updateColl('j');
+			
+		}});
+		jumpBottom.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				selected.updateColl('m');
+			
+		}});
+		
 	}
 	
+	//Repaints the whole map from the 1st tile to the last one
 	public void repaintAll(){
 		
 		background.repaint(tableTiles[0][0].getLocation().x,tableTiles[0][0].getLocation().y,
@@ -396,9 +433,9 @@ public class MapMaker extends JFrame{
 		collisionLabel.setLocation(508,612);
 		background.add(collisionLabel);
 		
-		JLabel collLabels = new JLabel("Wall     Land    Water   Ladder   None");
+		JLabel collLabels = new JLabel("Wall     Land    Water   Ladder   None   JumpT   JumpB");
 		collLabels.setForeground(selLabel.getForeground());
-		collLabels.setSize(200,25);
+		collLabels.setSize(220,25);
 		collLabels.setFont(new Font("Calibri",0,10));
 		collLabels.setLocation(481,625);
 		background.add(collLabels);
@@ -450,11 +487,7 @@ public class MapMaker extends JFrame{
 				colTiles[y][x] = new CollisionTiles(16,tableTiles[y][x].getLocation());
 				colTiles[y][x].addMouseFunction(selected,tableTiles[y][x],newBack);
 				colTiles[y][x].setBackground(new Color(0,0,0,0));
-				//colTiles[y][x].addMouseFunction(selected,tableTiles[y][x],background);
 			
-				//places the colTiles ontop the tableTiles
-				//background.add(colTiles[y][x]);
-				//background.add(tableTiles[y][x]);	
 				newBack.add(colTiles[y][x]);
 				newBack.add(tableTiles[y][x]);
 				

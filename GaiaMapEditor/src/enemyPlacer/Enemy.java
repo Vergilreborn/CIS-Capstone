@@ -26,6 +26,10 @@ public class Enemy extends JPanel {
 	int height;
 	int itemNumber;
 	
+	
+	
+	
+	
 	public Enemy(String name,Image img,int posX, int posY, int width, int height ){
 		this.type = name;
 		this.setLocation(new Point(posX,posY));

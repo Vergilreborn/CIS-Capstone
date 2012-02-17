@@ -49,8 +49,10 @@ public class EnemyPlacerMain extends JFrame{
 	DefaultListModel listData;
 	MapTiles [][] mapTiles = new MapTiles[38][48];
 	CollisionTiles[][] colTiles = new CollisionTiles[38][48];
+	Parts [][] tilesParts = new Parts[38][48];
 	JPanel itemEnemyNpc;
 	JTabbedPane tabs;
+	SetInfo dataBox;
 	
 	public EnemyPlacerMain() throws Exception{
 		super("Enemy Placer v 1.0");
@@ -62,6 +64,7 @@ public class EnemyPlacerMain extends JFrame{
 		this.setResizable(false);
 		
 		
+		
 		fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Gaia Maps", "gmaps"));
 		
@@ -71,7 +74,7 @@ public class EnemyPlacerMain extends JFrame{
 		background.setBackground(new Color(0,0,240));
 		background.setLayout(null);
 		
-		mapHolding = new JPanel();
+		mapHolding = new JPanel(true);
 		mapHolding.setLayout(null);
 		mapHolding.setBackground(new Color(0,0,0));
 		mapHolding.setLocation(560,5);
@@ -102,9 +105,16 @@ public class EnemyPlacerMain extends JFrame{
 										enemySet,itemSet,npcSet);
 		
 		
+		JLabel selectLabel = new JLabel("Selected");
+		selectLabel.setLocation(295,530);
+		selectLabel.setSize(100,20);
+		selectLabel.setFont(new Font("Calibri",1,14));
+		selectLabel.setForeground(Color.red);
+		
 		selector.setBackground(new Color(255,255,255));
 		selector.setLocation(300,548);
-		selector.setBorder(BorderFactory.createLineBorder(new Color(0,0,0),2));
+		selector.connectList(listData, data);
+		//selector.setBorder(BorderFactory.createLineBorder(new Color(0,0,0),2));
 		
 		//Setting up the buttons
 		remove = new StandardButton("Remove");
@@ -137,6 +147,10 @@ public class EnemyPlacerMain extends JFrame{
 		objects.setLayout(null);
 		objects.setBackground(new Color(180,180,180));
 		
+		dataBox = new SetInfo(new Point(276,405),itemSet.itemList);
+		dataBox.npcAction.setVisible(false);
+		dataBox.objects.setVisible(false);
+		dataBox.enemyStats.setVisible(false);
 				
 		npc = new JPanel();
 		npc.setSize(itemEnemyNpc.getSize());
@@ -147,6 +161,7 @@ public class EnemyPlacerMain extends JFrame{
 		items.setSize(itemEnemyNpc.getSize());
 		items.setLayout(null);
 		items.setBackground(new Color(180,180,180));
+		
 		//We need to design the "Map Tiles" to show the map
 		//we will also show the collision if the collision is checked
 		setUpWindows();
@@ -170,8 +185,25 @@ public class EnemyPlacerMain extends JFrame{
 				enemies.update(enemies.getGraphics());
 				npc.update(npc.getGraphics());
 				npc.repaint();
+				switch(tabs.getSelectedIndex()){
+				case 0:	dataBox.npcAction.setVisible(false);
+						dataBox.objects.setVisible(false);
+						dataBox.enemyStats.setVisible(false);
+						break;
+				case 1: dataBox.npcAction.setVisible(false);
+						dataBox.objects.setVisible(false);
+						dataBox.enemyStats.setVisible(true);
+						break;
+				case 2: dataBox.objects.setVisible(false);
+						dataBox.enemyStats.setVisible(false);
+						dataBox.npcAction.setVisible(true);
+						break;
+				case 3: dataBox.npcAction.setVisible(false);
+						dataBox.enemyStats.setVisible(false);
+						dataBox.objects.setVisible(true);
+						break;
 				
-		}});
+			}}});
 		
 		buildEnemies();
 		buildItems();
@@ -181,6 +213,7 @@ public class EnemyPlacerMain extends JFrame{
 		
 		
 		//Add everything to the Main Panel
+		background.add(selectLabel);
 		background.add(mapHolding);
 		background.add(remove);
 		background.add(selector);
@@ -190,10 +223,18 @@ public class EnemyPlacerMain extends JFrame{
 		background.add(saveMapWithEnemies);
 		background.add(itemEnemyNpc);
 		background.add(listHolding);
+		background.add(dataBox.enemyStats);
+		background.add(dataBox.npcAction);
+		background.add(dataBox.objects);
+		
 	
 		//Add everything to the main window
 		//then update and set it visible that way 
 		//it doesn't have to buffer while being shown
+		enemies.repaint();
+		npc.repaint();
+		items.repaint();
+		objects.repaint();
 		this.add(background);
 		background.validate();
 		background.repaint();
@@ -283,6 +324,14 @@ public class EnemyPlacerMain extends JFrame{
 				mapTiles[y][x].setNull();
 				colTiles[y][x] = new CollisionTiles(16,new Point(((16*x)),(16*y)));
 				mapTiles[y][x].connect(colTiles[y][x]);
+				tilesParts[y][x] = new Parts(x,y,new ImageIcon("Items.png").getImage(),
+											new ImageIcon("EnemiesUpdate.png").getImage(),
+											new ImageIcon("NPC.png").getImage()
+											,mapHolding);
+				tilesParts[y][x].connect(selector,tilesParts);
+				tilesParts[y][x].setLocation(16*x,16*y);
+				tilesParts[y][x].mouseFunction();
+				mapHolding.add(tilesParts[y][x]);
 				mapHolding.add(colTiles[y][x]);
 				mapHolding.add(mapTiles[y][x]);
 				

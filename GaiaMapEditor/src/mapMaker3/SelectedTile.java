@@ -100,6 +100,9 @@ public class SelectedTile extends JPanel{
 		
 	}
 	
+	
+	//According to the collision type selected, this will change the color and
+	//update the graphics of the selector box
 	public void updateColl(char collisionType){
 		collChar = collisionType;
 		switch(collChar){
@@ -112,11 +115,10 @@ public class SelectedTile extends JPanel{
 		case 's': collBackground.updateBack(new Color(190,186,20,100)); break;
 		case 'u': collBackground.updateBack(new Color(240,244,44,100)); break;
 		case 'i': collBackground.updateBack(new Color(57,240,240,100)); break;
+		case 'j': collBackground.updateBack(new Color(232,158,23,100)); break;
+		case 'm': collBackground.updateBack(new Color(154,106,16,100)); break;
 		}
 		collBackground.update(collBackground.getGraphics());
-		
-		
-		
 	}
 	
 	//This will draws the image, since it will be cropped

@@ -1,6 +1,7 @@
 package enemyPlacer;
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 
 public class SelectingTiles extends JPanel{
 
@@ -28,8 +29,11 @@ public class SelectingTiles extends JPanel{
 	boolean isObject = false;
 	String name;
 	
+	DefaultListModel list;
+	ArrayList <String> data;
 	
-	//If item
+	
+	
 	
 	
 	public SelectingTiles(char imageType, Image items, Image enemies, Image NPC, Image objects, Enemies enm, Items itms,Npcs npcs){
@@ -42,7 +46,7 @@ public class SelectingTiles extends JPanel{
 		this.npc = NPC;
 		this.setSize(64,64);
 		this.setLayout(null);
-	
+		
 		this.currentSelection = imageType;
 		this.setOpaque(false);
 		
@@ -58,8 +62,9 @@ public class SelectingTiles extends JPanel{
 		
 	}
 	public void changeSelected(char type, int itemNumber){
-		
+		currentSelection = type;
 		switch(type){
+		
 			case 'e': isEnemy = true; 
 					  isItem = isObject = isNpc = false; 
 					  currEn = eList.enemies[itemNumber]; 
@@ -72,7 +77,7 @@ public class SelectingTiles extends JPanel{
 							  validate();
 						  }
 					  break;
-			           case 'i' : isItem = true;
+			case 'i' : isItem = true;
 					   isEnemy = isObject = isNpc = false;
 					   currItem = iList.item[itemNumber];
 					   for(int y = 0; y < display.length;y++)
@@ -84,7 +89,7 @@ public class SelectingTiles extends JPanel{
 								  validate();
 							  }
 						  break;
-			           case 'n' : isNpc= true;
+			case 'n' : isNpc= true;
 					   isEnemy = isObject = isItem = false;
 					   currNpc = npcList.npcPeople[itemNumber];
 					   for(int y = 0; y < display.length;y++)
@@ -100,9 +105,32 @@ public class SelectingTiles extends JPanel{
 		
 		}
 	
-		repaint(display[0][0].getLocation().x, display[0][0].getLocation().y,16*4,16*4);
+		repaint(display[0][0].getLocation().x, display[0][0].getLocation().y,16*4,16*4);	
+	}
+	
+	public void connectList(DefaultListModel list,ArrayList<String> data){
+		this.data = data;
+		this.list = list;
+	}
+	
+	public int inputIntoList(Enemy en, int tilePosX,int tilePosY){
+		int id = 0;
+		return id;
+	
+	}
+	public int inputIntoList(Npc npc, int tilePosX,int tilePosY){
+		int id = 0;
+		return id;
 		
-		
+	}
+	public int inputIntoList(Object obj, int tilePosX,int tilePosY){
+		int id = 0;
+		return id;
+	
+	}
+	public int inputIntoList(Item item, int tilePosX,int tilePosY){
+		int id = 0;
+		return id;
 		
 	}
 
