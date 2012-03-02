@@ -14,20 +14,22 @@ namespace GaiaSequel
     class MainPlayer
     {
         //Players Stats
-        int health = 4;
-        int mana = 0;
-        int strength = 1;
-        int intelligence = 0;
-        int defense = 0;
-        int currEXP = 0;
-        int currLvl = 1;
-        public String simpleGui;
+        public int maxHealth = 6;
+        public int health = 4;
+        public int maxMana = 3;
+        public int mana = 2;
+        public int strength = 1;
+        public int intelligence = 0;
+        public int defense = 0;
+        public int currEXP = 0;
+        public int currLvl = 1;
+        public String simpleGui = "";
 
         //Error Checking information
-        public String posString;
-        public String groundString;
-        public String jumpingString;
-        public String jumpVectorString;
+        public String posString = "";
+        public String groundString = "";
+        public String jumpingString = "";
+        public String jumpVectorString = "";
 
         //reset to orginal position Debugging purpose
         public Vector2 resetPosition;
@@ -43,6 +45,7 @@ namespace GaiaSequel
 
         //boolean actions
         public bool jumping;
+        public int climbing = -1;
         public bool freeFalling = true;
         bool touchingGround;
         bool jumpFalling = false;
@@ -53,13 +56,16 @@ namespace GaiaSequel
         float windTimer = 0f;
         float walkTimer = 0f;
         float jumpTimer = 0f;
+        float climbTimer = 0f;
         float blinkingTimer = 0f;
         int currJumpFrame = 0;
         int currWindFrame = 0;
         int currWalkFrame = 0;
+        int currClimbFrame = 0;
         int windFrames = 3;
         int jumpFrames = 5;
         int walkFrames = 4;
+        int climbFrames = 4;
 
         //The sprite sheet for Will (Main Character)
         public Texture2D spriteSheet;
@@ -76,7 +82,7 @@ namespace GaiaSequel
         Keys dominateKey = Keys.End;
 
         //Collision Rectangles
-        public Rectangle collisionRect;
+        
         public Rectangle footArea;
 
         //this is used for position the player on the screen
@@ -94,6 +100,7 @@ namespace GaiaSequel
 
         //MapReader
         MapReader mapDesign;
+        Random rand;
 
         public MainPlayer(Texture2D sprite, Vector2 position)
         {
@@ -115,19 +122,19 @@ namespace GaiaSequel
             //Center of the sprite
             center = new Vector2(destRect.X + 32, destRect.Y + 42);
 
-            //rectangle for collision
-            collisionRect = new Rectangle((int)position.X, (int)position.Y, width, height);
+          
 
         }
 
         public void update(KeyboardState newState, GameTime time) {
 
-            simpleGui = "Health: " + health + "\nMana: " + mana + "\nStr: " + strength
+            simpleGui = "\nMaxHealth : " + maxHealth + "\nHealth: " + health + "\nMana: " + mana + "\nStr: " + strength
                                 + "\nDef: " + defense + "\nInt: " + intelligence + "\nLVL: " + currLvl + "\nExp: " + currEXP;
 
             //beginning walking starts off
             walking = false;
             freeFalling = checkFreeFalling();
+            climbing = checkClimbing(mapDesign.ladders);
 
             
             
@@ -135,108 +142,144 @@ namespace GaiaSequel
             posString = "Pos:(" + destRect.X + "," + destRect.Y + ") Sav:(" + savedPosition.X + "," + savedPosition.Y + ")";
             groundString = "On ground: " + touchingGround;
             jumpingString = "Jumping: " + jumping + "  JumpHeight: " + jumpHeight;
-            jumpVectorString = "Position: " + jumpYPosition + "\nJumpFrame:" + currJumpFrame;
+            jumpVectorString = "Position: " + jumpYPosition + "\nJumpFrame:" + currJumpFrame +"\nClimbing:"+ climbing 
+                               + "\nFeetWidth:" + footArea.Width;
 
 
             //Get the dominate like if left is pressed first left is dominate
             //if there are 2 keys and both are different than before then first
             //in the array is the dominate key
-            if(newState.GetPressedKeys().Length == 1 && onlyArrowsPressed(newState.GetPressedKeys()[0])){
+         
+
+            if (newState.GetPressedKeys().Length == 1 && onlyArrowsPressed(newState.GetPressedKeys()[0]))
+            {
                 dominateKey = newState.GetPressedKeys()[0];
-            }else if(newState.GetPressedKeys().Length > 1 &&
-                 ( onlyArrowsPressed(newState.GetPressedKeys()[0]) ||
-                  onlyArrowsPressed(newState.GetPressedKeys()[1]))){
-               dominateKey = setDominateKey(newState.GetPressedKeys(),dominateKey);
+            }
+            else if (newState.GetPressedKeys().Length > 1 &&
+                (onlyArrowsPressed(newState.GetPressedKeys()[0]) ||
+                 onlyArrowsPressed(newState.GetPressedKeys()[1]))){
+                dominateKey = setDominateKey(newState.GetPressedKeys(), dominateKey);
             }
 
-            //inform of keys pressed
+                //inform of keys pressed
             jumpVectorString += " Dominate: " + dominateKey;
-           
 
-            //Now we need move our character upon input
-            spriteMovement(newState);
+
 
 
 
             //Debug button in case we move too far away from the 
             //map or we begin to glitch
             if (newState.IsKeyDown(Keys.R) && oldState.IsKeyUp(Keys.R)){
-                position = resetPosition;
-                jumpYPosition = position.Y;
+                 position = resetPosition;
+                 jumpYPosition = (int)position.Y;
             }
 
             //Button to turn the wind off
             if (newState.IsKeyDown(Keys.E) && oldState.IsKeyUp(Keys.E))
-                if (windBlowing)
-                    windBlowing = false;
-                else
-                    windBlowing = true;
+                 if (windBlowing)
+                     windBlowing = false;
+                 else
+                     windBlowing = true;
 
             //load next map
             if (newState.IsKeyDown(Keys.T) && oldState.IsKeyUp(Keys.T))
                 if (mapDesign.currentLvl == 0)
-                    mapDesign.loadNext(1);
-                else
-                    mapDesign.loadNext(0);
+                        mapDesign.loadNext(1);
+                    else
+                        mapDesign.loadNext(0);
 
-            //Now to add the walking animations
-            if (walking && !jumping){
-                walkingAnimation(time, walkDir);
 
-            //Else the sprite is doing nothing...check what position they are facing
-            //and make corresponding windAnimation;
-            }else if (!jumping && !walking && windBlowing){
-                windAnimation(time, walkDir);
-           
-            //reset standing position
-            }else{
-                currWalkFrame = 0;
-                sourceRect = new Rectangle(0, 42 * 2 * walkDir, 32 * 2, 42 * 2);
-                
-            }
-              
-            //Now for the jumping motion and calculation
-            //NEED TO ADD -animations
-            if (jumping)
+
+
+            if (climbing > -1 && !jumping)
             {
-                jumpHeight += .6f;
-                position.Y += jumpHeight;
-                jumpingAnimation(time, walkDir);
-                if (jumpHeight >= 0)
-                    jumpFalling = true;
-                else
-                    jumpFalling = false;
-                //time to check if we are jump falling and if we are
-                //check to see if we are on the ground
-                if (jumpFalling)
-                    touchingGround = onGround(jumpYPosition);
-            }
-            else
-                currJumpFrame = 0;
 
-            //time to the freefalling calculation
-            //this is when we are falling and not falling from
-            //a jump
-            if(freeFalling && !jumping)
+                position.X = climbing - 16;
+                if (newState.IsKeyDown(Keys.Up) && !newState.IsKeyDown(Keys.Down))
+                {
+                    position.Y -= upDownSpeed;
+                    climbingAnimation(time);
+                }
+                else if (newState.IsKeyDown(Keys.Down) && !newState.IsKeyDown(Keys.Up))
+                {
+                    position.Y += upDownSpeed;
+                    climbingAnimation(time);
+                }
+
+
+                //time to the freefalling calculation
+                //this is when we are falling and not falling from
+                //a jump
+            }else if (freeFalling && !jumping)
                 position.Y += freeFallVelocity;
+            else
+            {
 
-            //This tests to see if you pressed the space to jump that is if you aren't already jumping
-            if (newState.IsKeyDown(Keys.Z) && oldState.IsKeyUp(Keys.Z))
-                if (!jumping){
-                    jumping = true;
-                    touchingGround = false;
-                    jumpYPosition = position.Y;
-                    jumpHeight = -9;
-                  }
+                currClimbFrame = 0;
 
-          
+                //Now we need move our character upon input
+                spriteMovement(newState);
+                //Now to add the walking animations
+                if (walking && !jumping)
+                {
+                    walkingAnimation(time, walkDir);
+
+                    //Else the sprite is doing nothing...check what position they are facing
+                    //and make corresponding windAnimation;
+                }
+                else if (!jumping && !walking && windBlowing)
+                {
+                    windAnimation(time, walkDir);
+
+                    //reset standing position
+                }
+                else
+                {
+                    currWalkFrame = 0;
+                    sourceRect = new Rectangle(0, 42 * 2 * walkDir, 32 * 2, 42 * 2);
+
+                }
+
+                //Now for the jumping motion and calculation
+                //NEED TO ADD -animations
+                if (jumping)
+                {
+                    jumpHeight += .6f;
+                    position.Y += jumpHeight;
+                    jumpingAnimation(time, walkDir);
+                    if (jumpHeight >= 0)
+                        jumpFalling = true;
+                    else
+                        jumpFalling = false;
+                    //time to check if we are jump falling and if we are
+                    //check to see if we are on the ground and apply smooth landing
+                    if (jumpFalling)
+                        touchingGround = onGround(jumpYPosition, position.Y);
+                }
+                else
+                    currJumpFrame = 0;
+
+
+
+                //This tests to see if you pressed the space to jump that is if you aren't already jumping
+                if (newState.IsKeyDown(Keys.Z) && oldState.IsKeyUp(Keys.Z))
+                    if (!jumping)
+                    {
+                        jumping = true;
+                        touchingGround = false;
+                        jumpYPosition = position.Y;
+                        jumpHeight = -9;
+                    }
+
+            }
 
             //update the sprites position on the map.
             destRect.X = (int)position.X;
             destRect.Y = (int)position.Y;
             center = new Vector2(destRect.X + 32, destRect.Y + 42);
             oldState = newState;
-            collisionRect = new Rectangle((int)position.X, (int)position.Y, width, height);
+          
             footArea = new Rectangle((int)center.X-14, (int)center.Y+27 , 26, 14);
         }
 
@@ -244,11 +287,17 @@ namespace GaiaSequel
         //this will check if the player is not on a walkable area and 
         //is not jumping. 
         public bool checkFreeFalling(){
+            bool falling = true;
             for(int i = 0; i < mapDesign.walkable.Count; i++){
                 if (mapDesign.walkable[i].onThis(this))
-                    return false;
+                    falling = false;
             }
-            return true;
+            for (int i = 0; i < mapDesign.walls.Count; i++) {
+                if (mapDesign.walls[i].destRect.Intersects(footArea))
+                    return true;
+            }
+            
+            return falling;
         }
 
         //This plays the wind animation
@@ -292,9 +341,22 @@ namespace GaiaSequel
         
         }
 
+        public void climbingAnimation(GameTime timer){
+
+            climbTimer += (float)timer.ElapsedGameTime.Milliseconds;
+            if (climbTimer > 130f)
+            {
+                currClimbFrame++;
+                if (currClimbFrame > climbFrames - 1)
+                    currClimbFrame = 0;
+                climbTimer = 0f;
+            }
+            // we will go across the sprite sheet x to the climbing start and *4 in y to indicate the position downward
+            sourceRect = new Rectangle((32*2 * currClimbFrame)+ 192,42*2* 4, 32 *2, 42 * 2);
+
+
+        }
      
-
-
         //This is for walkingAnimation
         //Same stuff as wind animation
         public void walkingAnimation(GameTime timer, int direction){
@@ -321,10 +383,10 @@ namespace GaiaSequel
 
         //This test if we are falling or jumping that we touch the same spot
         //as we jumped from.
-        public bool onGround(float jumpYPosition){
-            if (jumpYPosition < destRect.Y){
+        public bool onGround(float jumpYPosition, float newPosition){
+           
+            if (jumpYPosition <= newPosition){
                 position.Y = jumpYPosition;
-                destRect.Y = (int)position.Y;
                 jumping = false;
                 return true;
             }
@@ -363,7 +425,7 @@ namespace GaiaSequel
                     }else{
 
                         savedPosition.Y = position.Y;
-                        if (possibleCollision[1].isUsed && !jumping)
+                        if ((possibleCollision[1].isUsed  || (!possibleCollision[2].isUsed && possibleCollision[7].isUsed))&& !jumping)
                             position.Y = savedPosition.Y;
                         else
                             position.Y += upDownSpeed;
@@ -376,13 +438,15 @@ namespace GaiaSequel
                     }else{
 
                         savedPosition.Y = position.Y;
-                        if (possibleCollision[0].isUsed && !jumping)
+                        if ((possibleCollision[0].isUsed || (!possibleCollision[2].isUsed && possibleCollision[5].isUsed))&& !jumping)
                             position.Y = savedPosition.Y;
                         else
                             position.Y -= upDownSpeed;
                     }
                 
                 }
+             
+                
             }
             //This is moving left. We moving the according X-axis
             //and then check if we moved up and down while left is dom
@@ -403,7 +467,7 @@ namespace GaiaSequel
                     }else{
                         savedPosition.Y = position.Y;
                     
-                        if (possibleCollision[1].isUsed && !jumping)
+                        if ((possibleCollision[1].isUsed  || (!possibleCollision[3].isUsed && possibleCollision[6].isUsed))&& !jumping)
                             position.Y = savedPosition.Y;
                         else
                             position.Y += upDownSpeed;
@@ -415,12 +479,13 @@ namespace GaiaSequel
                         jumpHeight -= .1f;
                     }else{
                         savedPosition.Y = position.Y;
-                        if (possibleCollision[0].isUsed && !jumping)
+                        if ((possibleCollision[0].isUsed || (!possibleCollision[3].isUsed && possibleCollision[4].isUsed)) && !jumping)
                             position.Y = savedPosition.Y;
                         else
                             position.Y -= upDownSpeed;
                     }
                 }
+                
             }
             //This is moving up. We moving the according Y-axis
             //and then check if we moved left and right while up is dom
@@ -441,13 +506,14 @@ namespace GaiaSequel
                 if (newState.IsKeyDown(Keys.Left) && !newState.IsKeyDown(Keys.Right)){
                     savedPosition.X = position.X;
 
-                    if (possibleCollision[3].isUsed && !jumping)
+                    if ((possibleCollision[3].isUsed || (!possibleCollision[0].isUsed && possibleCollision[4].isUsed)) && !jumping)
                         position.X = savedPosition.X;
                     else
                         position.X -= leftRightSpeed;
+
                 }else if (newState.IsKeyDown(Keys.Right) && !newState.IsKeyDown(Keys.Left)){
                     savedPosition.X = position.X;
-                    if (possibleCollision[2].isUsed && !jumping)
+                    if ((possibleCollision[2].isUsed ||(!possibleCollision[0].isUsed && possibleCollision[5].isUsed)) && !jumping)
                         position.X = savedPosition.X;
                     else
                         position.X += leftRightSpeed;
@@ -469,19 +535,19 @@ namespace GaiaSequel
                 }
                 if (newState.IsKeyDown(Keys.Right) && !newState.IsKeyDown(Keys.Left)){
                     savedPosition.X = position.X;
-                    if (possibleCollision[2].isUsed && !jumping)
+                    if ((possibleCollision[2].isUsed || (!possibleCollision[1].isUsed && possibleCollision[7].isUsed)) && !jumping)
                         position.X = savedPosition.X;
                     else
                         position.X += leftRightSpeed;
 
                 }else if (newState.IsKeyDown(Keys.Left) && !newState.IsKeyDown(Keys.Right)){
                     savedPosition.X = position.X;
-                    if (possibleCollision[3].isUsed)
+                    if ((possibleCollision[3].isUsed || (!possibleCollision[1].isUsed && possibleCollision[6].isUsed)) && !jumping)
                         position.X = savedPosition.X;
                     else
                         position.X -= leftRightSpeed;
                 }
-            }  
+             }  
         }
         //This returns the dominate key pressed comparing it to the newly
         //pressed keys
@@ -498,7 +564,8 @@ namespace GaiaSequel
         }
 
         //Connect the map to the player for collision detections
-        public void connectMap(MapReader mapDesign){
+        public void connectMap(MapReader mapDesign,Random rand){
+            this.rand = rand;
             this.mapDesign = mapDesign;
         }
 
@@ -507,22 +574,24 @@ namespace GaiaSequel
         //there is no wall tile there
         public WallTile[] tilesNearPlayer(List<WallTile> tiles, Rectangle playerFeet, float upDownSpeed, float leftRightSpeed)
         {
-            //Array of tiles North, south, east, west in that order
-            
-            WallTile[] nsew = { new WallTile(), new WallTile(), new WallTile(), new WallTile() };
+            //Array of tiles North, south, east, west in that order, then north west, north east, south west, south 
+            WallTile [] nsew = {new WallTile(),new WallTile(),new WallTile(),new WallTile()
+                                   ,new WallTile(),new WallTile(),new WallTile(),new WallTile()};
 
             Rectangle collWidth = new Rectangle((int)(playerFeet.X - leftRightSpeed),playerFeet.Y,
                                                 (int)(playerFeet.Width + (leftRightSpeed * 2)),playerFeet.Height);
             Rectangle collHeight = new Rectangle(playerFeet.X, (int)(playerFeet.Y - upDownSpeed),
                                                  playerFeet.Width, (int)(playerFeet.Height + (2 * upDownSpeed)));
+            Rectangle diagnolTesting = new Rectangle((int)(playerFeet.X - leftRightSpeed), (int)(playerFeet.Y - upDownSpeed),
+                                                      (int)(playerFeet.Width + (leftRightSpeed * 2)), (int)(playerFeet.Height + (2 * upDownSpeed)));
             //This will set up the array and get the closest
             //tiles
             for (int i = 0; i < tiles.Count; i++)
             {
                 WallTile t = tiles[i];
-               
+
                 //If we have collision all around us, we don't need to search anymore
-                if (nsew[0].isUsed && nsew[1].isUsed && nsew[2].isUsed&& nsew[3].isUsed)
+                if (nsew[0].isUsed && nsew[1].isUsed && nsew[2].isUsed && nsew[3].isUsed)
                     break;
 
                 //Check to see if there is a collision block, "Wall" on the left
@@ -536,7 +605,7 @@ namespace GaiaSequel
                         nsew[3] = t;
                 }
                 //otherwise we need to see if its colliding above or belows us
-                else if (t.colliding(collHeight))
+                 else if (t.colliding(collHeight))
                 {
                     //if it does store properly once again
                     if (t.destRect.Y > playerFeet.Y + (playerFeet.Height / 2))
@@ -544,17 +613,66 @@ namespace GaiaSequel
                     if (t.destRect.Y < playerFeet.Y + (playerFeet.Height / 2))
                         nsew[0] = t;
                 }
-            }
+                 else if (t.colliding(diagnolTesting))
+                {
+                    if (t.destRect.Y > playerFeet.Y + (playerFeet.Height / 2) && t.destRect.X < playerFeet.X + (playerFeet.Width / 2))
+                        nsew[7] = t;
 
+                    if (t.destRect.Y > playerFeet.Y + (playerFeet.Height / 2) && t.destRect.X < playerFeet.X + (playerFeet.Width / 2))
+                        nsew[6] = t;
+                    if(t.destRect.Y < playerFeet.Y + (playerFeet.Height / 2) &&  t.destRect.X < playerFeet.X + (playerFeet.Width / 2))
+                        nsew[5] = t;
+                    if (t.destRect.Y < playerFeet.Y + (playerFeet.Height / 2) && t.destRect.X < playerFeet.X + (playerFeet.Width / 2))
+                        nsew[4] = t;
+                }
+            }
 
 
             //DEBUG purpose
             jumpVectorString += "\n" + nsew[0].isUsed + " " + nsew[1].isUsed + " " +
-                                       nsew[2].isUsed + " " + nsew[3].isUsed;
+                                       nsew[2].isUsed + " " + nsew[3].isUsed + "\n"+
+                                       nsew[4].isUsed + " " + nsew[5].isUsed + " " +
+                                       nsew[6].isUsed + " " + nsew[7].isUsed;
 
             //Returns the array with all the collisions around us, besides diagonal
             return nsew;
         }
 
+        public int checkClimbing(List<LadderTile> tiles){
+            for(int i = 0; i < tiles.Count; i++){
+            
+                if (tiles[i].onLadder(footArea))
+                {
+
+                    return (int)tiles[i].position.X;
+
+                }
+            }
+            return -1;
+        }
+        //Level up checks to see if the player has the EXP to level up
+        //and if it does it uses random to increase the stats
+        public void levelUp(){
+            if (currLvl < 100)
+            {
+                currEXP += (int)(rand.NextDouble() * 100);
+                if (currEXP >= 100)
+                {
+
+                    maxHealth += (int)(rand.Next(1,3));
+                    maxMana += (int)(rand.Next(1,2));
+                    intelligence += (int)(rand.Next(0,2));
+                    strength += (int)(rand.Next(0,2));
+                    defense += (int)(rand.Next(0,2));
+                    currEXP %= 100;
+                    currLvl++;
+                }
+            }else
+                currEXP = 0;
+         
+        
+       
+        }
+    
     }
 }

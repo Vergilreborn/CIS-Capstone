@@ -19,9 +19,12 @@ namespace GaiaSequel
             init(data);
         }
 
-        public bool inLine(Rectangle playerFeet){
+        public bool onLadder(Rectangle playerFeet){
+            bool checker = (playerFeet.X >= this.destRect.X) && ((playerFeet.X + playerFeet.Width) <= (this.destRect.X + this.destRect.Width));
+            return checker && this.destRect.Intersects(playerFeet);
+            //return true;
 
-            return true;
         }
+        
     }
 }
