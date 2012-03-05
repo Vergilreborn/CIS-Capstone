@@ -2,22 +2,13 @@
 <XnaContent xmlns:Pipeline="Microsoft.Xna.Framework.Content.Pipeline">
   <Asset Type="Pipeline:BuildItemCollection">
     <Item>
-      <Source>Text.spritefont</Source>
-      <Name>Text</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
+      <Source>Maps\GTILES32.png</Source>
+      <Name>Maps\GTILES32</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text.xnb</Output>
-      <Time>2011-12-12T22:58:27.4062636-05:00</Time>
-    </Item>
-    <Item>
-      <Source>Text2.spritefont</Source>
-      <Name>Text2</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text2.xnb</Output>
-      <Time>2011-12-12T22:58:27.4092638-05:00</Time>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\GTILES32.xnb</Output>
+      <Time>2012-01-25T21:25:22.8313747-05:00</Time>
     </Item>
     <Item>
       <Source>Maps\GTILES.png</Source>
@@ -25,7 +16,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\GTILES.xnb</Output>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\GTILES.xnb</Output>
       <Time>2012-01-25T21:10:30.1943188-05:00</Time>
     </Item>
     <Item>
@@ -34,17 +25,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Will.xnb</Output>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Will.xnb</Output>
       <Time>2012-03-01T22:41:59.6085014-05:00</Time>
-    </Item>
-    <Item>
-      <Source>Maps\GTILES32.png</Source>
-      <Name>Maps\GTILES32</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Maps\GTILES32.xnb</Output>
-      <Time>2012-01-25T21:25:22.8313747-05:00</Time>
     </Item>
     <Item>
       <Source>Sprites\Enemy\Skeleton.png</Source>
@@ -70,8 +52,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\life.xnb</Output>
-      <Time>2012-02-25T18:09:11.0565698-05:00</Time>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\life.xnb</Output>
+      <Time>2012-03-03T16:57:43.1925606-05:00</Time>
     </Item>
     <Item>
       <Source>Sprites\Gui\PlayerGui.png</Source>
@@ -79,7 +61,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\PlayerGui.xnb</Output>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\PlayerGui.xnb</Output>
       <Time>2012-02-25T20:38:46.6289432-05:00</Time>
     </Item>
     <Item>
@@ -88,18 +70,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\characters2.xnb</Output>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\characters2.xnb</Output>
       <Time>2012-02-25T21:03:22.5823629-05:00</Time>
-    </Item>
-    <Item>
-      <Source>Music\SouthCape.mp3</Source>
-      <Name>Music\SouthCape</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\SouthCape.xnb</Output>
-      <Extra>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\SouthCape.wma</Extra>
-      <Time>2012-02-25T22:07:24.5311098-05:00</Time>
     </Item>
     <Item>
       <Source>Sprites\Gui\Transformation2.png</Source>
@@ -107,18 +79,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\Transformation2.xnb</Output>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\Transformation2.xnb</Output>
       <Time>2012-02-26T22:58:48.6027607-05:00</Time>
-    </Item>
-    <Item>
-      <Source>Music\Reversion.mp3</Source>
-      <Name>Music\Reversion</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\Reversion.xnb</Output>
-      <Extra>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\Reversion.wma</Extra>
-      <Time>2012-02-26T23:08:19.1763956-05:00</Time>
     </Item>
     <Item>
       <Source>Sprites\Gui\TitleScreen.png</Source>
@@ -126,7 +88,7 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Users\Alexander\Documents\Visual Studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\TitleScreen.xnb</Output>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\TitleScreen.xnb</Output>
       <Time>2012-02-28T13:12:20.4261856-05:00</Time>
     </Item>
     <Item>
@@ -136,7 +98,72 @@
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\IntroScreenSetup.xnb</Output>
-      <Time>2012-02-29T11:28:13.9923782-05:00</Time>
+      <Time>2012-03-03T23:16:54.3845289-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sprites\freedan.png</Source>
+      <Name>Sprites\freedan</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\freedan.xnb</Output>
+      <Time>2012-03-03T16:08:07.5413631-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sprites\Gui\SelectionScreen.png</Source>
+      <Name>Sprites\Gui\SelectionScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\SelectionScreen.xnb</Output>
+      <Time>2012-03-04T18:31:30.1250106-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sprites\Gui\PlayerMenu.png</Source>
+      <Name>Sprites\Gui\PlayerMenu</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\PlayerMenu.xnb</Output>
+      <Time>2012-03-04T16:52:46.2007766-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Text.spritefont</Source>
+      <Name>Text</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text.xnb</Output>
+      <Time>2011-12-12T22:58:27.4062636-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Text2.spritefont</Source>
+      <Name>Text2</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text2.xnb</Output>
+      <Time>2011-12-12T22:58:27.4092638-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Music\SouthCape.mp3</Source>
+      <Name>Music\SouthCape</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\SouthCape.xnb</Output>
+      <Extra>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\SouthCape.wma</Extra>
+      <Time>2012-02-25T22:07:24.5311098-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Music\Reversion.mp3</Source>
+      <Name>Music\Reversion</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\Reversion.xnb</Output>
+      <Extra>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\Reversion.wma</Extra>
+      <Time>2012-02-26T23:08:19.1763956-05:00</Time>
     </Item>
     <Item>
       <Source>Music\Intro.mp3</Source>
@@ -158,6 +185,43 @@
       <Extra>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\MapOfTheWorld.wma</Extra>
       <Time>2012-02-29T16:58:40.7929633-05:00</Time>
     </Item>
+    <Item>
+      <Source>Music\WillsDream.mp3</Source>
+      <Name>Music\WillsDream</Name>
+      <Importer>Mp3Importer</Importer>
+      <Processor>SongProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\WillsDream.xnb</Output>
+      <Extra>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\WillsDream.wma</Extra>
+      <Time>2012-03-04T00:27:03.875298-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\selectSound.wav</Source>
+      <Name>Sounds\selectSound</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\selectSound.xnb</Output>
+      <Time>2012-03-04T13:23:42.5231955-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\confirmSound.wav</Source>
+      <Name>Sounds\confirmSound</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\confirmSound.xnb</Output>
+      <Time>2012-03-04T13:33:11.9027622-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\healthIncreaseSound.wav</Source>
+      <Name>Sounds\healthIncreaseSound</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\healthIncreaseSound.xnb</Output>
+      <Time>2012-03-04T13:40:50.5429949-05:00</Time>
+    </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>
@@ -172,27 +236,27 @@
     <Assemblies>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.XImporter.dll</Key>
-        <Value>2010-08-23T12:41:18-05:00</Value>
+        <Value>2010-08-23T13:41:18-04:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.VideoImporters.dll</Key>
-        <Value>2010-08-23T12:41:18-05:00</Value>
+        <Value>2010-08-23T13:41:18-04:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.TextureImporter.dll</Key>
-        <Value>2010-08-23T12:41:18-05:00</Value>
+        <Value>2010-08-23T13:41:18-04:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.FBXImporter.dll</Key>
-        <Value>2010-08-23T12:41:18-05:00</Value>
+        <Value>2010-08-23T13:41:18-04:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.EffectImporter.dll</Key>
-        <Value>2010-08-23T12:41:18-05:00</Value>
+        <Value>2010-08-23T13:41:18-04:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Program Files (x86)\Microsoft XNA\XNA Game Studio\v4.0\References\Windows\x86\Microsoft.Xna.Framework.Content.Pipeline.AudioImporters.dll</Key>
-        <Value>2010-08-23T12:41:18-05:00</Value>
+        <Value>2010-08-23T13:41:18-04:00</Value>
       </Assembly>
       <Assembly>
         <Key>C:\Windows\Microsoft.Net\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\v4.0_4.0.0.0__842cf8be1de50553\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>

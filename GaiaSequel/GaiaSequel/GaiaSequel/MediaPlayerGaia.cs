@@ -24,7 +24,8 @@ namespace GaiaSequel
             songPlaying = songs[0];
             songs[0] = "Intro";
             songs[1] = "SouthCape";
-            songs[2] = "MapOfTheWorld";
+            songs[2] = "WillsDream";
+            songs[3] = "MapOfTheWorld";
 
             MediaPlayer.Play(content.Load<Song>("Music/" + songs[0]));
             MediaPlayer.IsRepeating = true;

@@ -44,8 +44,9 @@ namespace GaiaSequel
         bool paused = false;
         bool needDarkBack = false;
         int playerSwitch = 0;
-        char gameState;
+        int gameState;
         MediaPlayerGaia mediaPlayer;
+        SoundPlayerGaia soundPlayer;
 
         public Game1()
         {
@@ -79,10 +80,11 @@ namespace GaiaSequel
             spriteBatch = new SpriteBatch(GraphicsDevice);
             rand = new Random();
             mediaPlayer = new MediaPlayerGaia();
+            soundPlayer = new SoundPlayerGaia();
 
           
             //Load the main player
-            player = new MainPlayer(Content.Load<Texture2D>("Sprites/Will"), new Vector2(160, 120));
+            player = new MainPlayer(Content.Load<Texture2D>("Sprites/Will"),Content.Load<Texture2D>("Sprites/freedan"), new Vector2(160, 120),64,84);
             skeleton = new Enemy(10, 2, 3, new Vector2(60, 50), 72, 120, false, Content.Load<Texture2D>("Sprites/Enemy/Skeleton"),true,rand);
             bat = new Enemy(10, 2, 3, new Vector2(70, 70), 80, 80, true, Content.Load<Texture2D>("Sprites/Enemy/Bat"),true,rand);
           
@@ -98,9 +100,8 @@ namespace GaiaSequel
 
             
             mediaPlayer.init(Content);
-
-            
-            //loads the music and plays it automatically
+            soundPlayer.init(Content);
+           
            
          
             //Load first level
@@ -108,27 +109,30 @@ namespace GaiaSequel
             mapDesigner.buildMap("Content/Maps/level",0);
 
             //Connect the map to the main player and temporary enemies
-            player.connectMap(mapDesigner,rand);
+            player.connectMap(mapDesigner,rand,soundPlayer);
             skeleton.connectMap(mapDesigner);
             bat.connectMap(mapDesigner);
 
             //sets the game state to opening screen
-            //stats - 't' for title
-            //        'o' for openingScreen
-            //        'p' for paused
-            //        'm' for menu
-            //        'a' for active
-            //        'l' for load/save screen
-            //        'v' for video playing 
-            gameState = 't';
+            //stats - '0' for title
+            //        '1' for openingScreen
+            //        '2' for paused
+            //        '3' for menu
+            //        '4' for active
+            //        '5' for load/save screen
+            //        '6' for video playing 
+            gameState = 0;
 
             //sets up the Hud and all the graphics any menu
-            allGui = new AllGui(cam,player,Content.Load<Texture2D>("Sprites/Gui/PlayerGui")
-                                                                            ,Content.Load<Texture2D>("Sprites/Gui/Transformation2")
-                                                                            ,Content.Load<Texture2D>("Sprites/Gui/characters2"),
+            allGui = new AllGui(cam, player, Content.Load<Texture2D>("Sprites/Gui/PlayerGui")
+                                                                            , Content.Load<Texture2D>("Sprites/Gui/Transformation2")
+                                                                            , Content.Load<Texture2D>("Sprites/Gui/characters2"),
                                                                             Content.Load<Texture2D>("Sprites/Gui/TitleScreen"),
                                                                             Content.Load<Texture2D>("Sprites/Gui/IntroScreenSetup")
-                                                                            ,Content.Load<Texture2D>("Sprites/Gui/life"));
+                                                                            , Content.Load<Texture2D>("Sprites/Gui/life")
+                                                                            , Content.Load<Texture2D>("Sprites/Gui/SelectionScreen"), 
+                                                                            Content.Load<Texture2D>("Sprites/Gui/PlayerMenu"));
+            allGui.connect(soundPlayer);
             
             // TODO: use this.Content to load your game content here
         }
@@ -166,11 +170,14 @@ namespace GaiaSequel
             // Allows the game to exit
             if (current.IsKeyDown(Keys.Back) && prevState.IsKeyUp(Keys.Back))
                 this.Exit();
+           
+
+            //All keys for action are debugging
             if (current.IsKeyDown(Keys.A) && prevState.IsKeyUp(Keys.A))
-                if (gameState == 't')
-                    gameState = 'o';
+                if (gameState == 0)
+                    gameState = 1;
                 else
-                    gameState = 't';
+                    gameState = 0;
             //allows the game to be paused
             if (current.IsKeyDown(Keys.P) && prevState.IsKeyUp(Keys.P))
                 if (paused)
@@ -195,14 +202,25 @@ namespace GaiaSequel
             //allows use to toggle the map on and off
             if (current.IsKeyDown(Keys.H) && prevState.IsKeyUp(Keys.H))
                 if (player.health < player.maxHealth)
+                {
                     player.health++;
+                    soundPlayer.playSound(2);
+                }
+            if (current.IsKeyDown(Keys.S) && prevState.IsKeyUp(Keys.S))
+                if (player.playerID == 1)
+                    player.loadNewPlayer(2);
+                else
+                    player.loadNewPlayer(1);
             if (current.IsKeyDown(Keys.J) && prevState.IsKeyUp(Keys.J))
                 if (1 < player.health)
                     player.health--;
 
             if (current.IsKeyDown(Keys.B) && prevState.IsKeyUp(Keys.B))
                 if (player.mana < player.maxMana)
+                {
                     player.mana++;
+                    soundPlayer.playSound(2);
+                }
             if (current.IsKeyDown(Keys.N) && prevState.IsKeyUp(Keys.N))
                 if (1 < player.mana)
                     player.mana--;
@@ -254,9 +272,9 @@ namespace GaiaSequel
                 
                 }
 
-            
 
-            if (gameState != 't')
+
+            if (gameState != 0 && gameState != 1 && gameState !=2)
             {
                 mediaPlayer.playNew(1);
 
@@ -286,7 +304,11 @@ namespace GaiaSequel
 
                         player.update(new KeyboardState(), gameTime);
                     }
-                    mediaPlayer.resume();
+
+                    if (current.IsKeyDown(Keys.RightShift) && prevState.IsKeyUp(Keys.RightShift))
+                        gameState = 2;
+
+                    
 
 
 
@@ -295,8 +317,10 @@ namespace GaiaSequel
                 else
                     mediaPlayer.pause();
             }
-            else
+            else if (gameState == 0)
                 mediaPlayer.playNew(0);
+            else if (gameState == 1)
+                mediaPlayer.playNew(2);
 
 
 
@@ -327,13 +351,14 @@ namespace GaiaSequel
 
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, cam.transform);
 
-            if (gameState != 't')
+            if (gameState != 0 && gameState != 1)
             {
                 //draws debugger information
                 if (!hideMap)
                 {
                     mapDesigner.Draw(spriteBatch, normal);
                 }
+              
                 if (!hidePrint)
                 {
                     var t = new Texture2D(GraphicsDevice, 1, 1);

@@ -27,3 +27,15 @@ C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\G
 C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\Intro.wma
 C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\MapOfTheWorld.xnb
 C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\MapOfTheWorld.wma
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\freedan.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\SelectionScreen.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\WillsDream.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Music\WillsDream.wma
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\selectSound.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\confirmSound.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\healthIncreaseSound.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\PlayerMenu.xnb
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\GaiaSequel.exe.manifest
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\GaiaSequel.application
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\obj\x86\Debug\GaiaSequel.exe.manifest
+C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\obj\x86\Debug\GaiaSequel.application
