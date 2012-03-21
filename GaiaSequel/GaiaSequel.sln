@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaiaSequel", "GaiaSequel\GaiaSequel\GaiaSequel.csproj", "{B2FABF6A-1621-4B68-8FA3-A2EC8B6620D9}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "GaiaSequelContent", "GaiaSequel\GaiaSequelContent\GaiaSequelContent.contentproj", "{C7155DF1-D2A6-4754-9C5C-4E1F58ED7458}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GaiaSequelContent", "GaiaSequel\GaiaSequelContent\GaiaSequelContent.contentproj", "{C7155DF1-D2A6-4754-9C5C-4E1F58ED7458}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

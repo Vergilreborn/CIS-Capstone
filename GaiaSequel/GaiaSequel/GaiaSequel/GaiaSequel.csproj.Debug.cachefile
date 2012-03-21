@@ -22,6 +22,12 @@ Content\Music\WillsDream.xnb
 Content\Sounds\selectSound.xnb
 Content\Sounds\confirmSound.xnb
 Content\Sounds\healthIncreaseSound.xnb
+Content\Sprites\WillAttackingSheet.xnb
+Content\Sounds\attackSoundWill.xnb
+Content\Sprites\NPC\NPCSheet.xnb
+Content\Sprites\Gui\TextBox.xnb
+Content\Sounds\enemyHit.xnb
+Content\Sounds\talkingSound.xnb
 Content\Music\SouthCape.wma
 Content\Music\Reversion.wma
 Content\Music\Intro.wma

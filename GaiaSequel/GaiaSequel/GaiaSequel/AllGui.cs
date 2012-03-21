@@ -43,8 +43,11 @@ namespace GaiaSequel
         Rectangle loadGameSource;
         Rectangle optionsSource;
         Rectangle testRoomSource;
+        Rectangle playerRectangle = new Rectangle(0, 0, 0, 0);
       
         float flashingText = 0f;
+        SpriteFont font;
+        Texture2D currentPlayer;
     
         bool textOn = true;
         int health = 0;
@@ -52,7 +55,12 @@ namespace GaiaSequel
         int mana = 0;
         int maxMana = 0;
         int playerID;
+
+        //used to tell the player's information in the playerstatus
+        String menuData = "";
         int fingerPositionY = 0;
+        int fingerPosition2Y = 0;
+        int fingerPosition2X = 0;
 
         float animationTimer = 0f;
         int x = 0;
@@ -89,18 +97,15 @@ namespace GaiaSequel
             loadGameSource = new Rectangle(18, 112, 192, 48);
             optionsSource = new Rectangle(18, 241, 172, 48);
             testRoomSource = new Rectangle(18, 176, 192, 48);
-          
-
-
-
-
-
-
         }
-
-        public void connect(SoundPlayerGaia sounds){
+        //we connect the sounds of menues and the font to this class file
+        public void connect(SoundPlayerGaia sounds, SpriteFont font){
             this.sounds = sounds;
+            this.font = font;
+            font.LineSpacing = 39;
         }
+
+        //The update loop that gets called constantly
         public int update(GameTime time, int state, char characterChange, MainPlayer player, KeyboardState currentKey, KeyboardState prevKey)
         {
 
@@ -151,7 +156,6 @@ namespace GaiaSequel
                 //This is for loading,starting a new game or going to the test room
                 case 1:
 
-
                     if (prevKey.IsKeyUp(Keys.Up) && currentKey.IsKeyDown(Keys.Up))
                     {
                         fingerPositionY -= 60;
@@ -181,25 +185,66 @@ namespace GaiaSequel
                 
                 //This is for the menu for the player
                 case 2:
+                    //Displays the players stats according to the player
+                    menuData = player.currLvl + "\n" + player.maxHealth + "\n"
+                               + player.maxMana + "\n0\n" + player.strength
+                               + "\n" + player.defense + "\n" + player.intelligence +
+                               "\n" + player.currEXP;
+                    
+                    //Check to see what keys were pressed and move the finger accordingly
                     if (prevKey.IsKeyUp(Keys.Up) && currentKey.IsKeyDown(Keys.Up))
                     {
-                        fingerPositionY -= 60;
-                        if (fingerPositionY < 0)
-                            fingerPositionY = 180;
-                        fingerPositionY = fingerPositionY % 240;
+                        fingerPosition2Y -= 47;
+                        if (fingerPosition2Y < 0)
+                            fingerPosition2Y = 282;
+                        fingerPosition2Y = fingerPosition2Y % 329;
                         sounds.playSound(0);
                     }
 
                     if (prevKey.IsKeyUp(Keys.Down) && currentKey.IsKeyDown(Keys.Down))
                     {
 
-                        fingerPositionY += 60;
-                        fingerPositionY = fingerPositionY % 240;
+                        fingerPosition2Y += 47;
+                        fingerPosition2Y = fingerPosition2Y % 329;
                         sounds.playSound(0);
                     }
-                 break;
+                        if (prevKey.IsKeyUp(Keys.Left) && currentKey.IsKeyDown(Keys.Left))
+                    {
+                        fingerPosition2X -= 63;
+                        if (fingerPosition2X < 0)
+                            fingerPosition2X = 378;
+                        fingerPosition2X = fingerPosition2X % 441 ;
+                        sounds.playSound(0);
+                    }
+
+                    if (prevKey.IsKeyUp(Keys.Right) && currentKey.IsKeyDown(Keys.Right))
+                    {
+
+                        fingerPosition2X += 63;
+                        fingerPosition2X = fingerPosition2X % 441;
+                        sounds.playSound(0);
+                    }
+                    //We unpause the game and move to the next available gamestate
+                    if (prevKey.IsKeyUp(Keys.RightShift) && currentKey.IsKeyDown(Keys.RightShift))
+                        state = 3;
+                    //Change what the character looks like on the sprite sheet making sure its the standing still image
+                    if(!player.attacking)
+                        currentPlayer = player.spriteSheet;
+                    playerRectangle = new Rectangle(0, 0, player.width, player.height);
+                    break;
+
+                    //This is when the game is running and if this button is pressed, the 
+                    //menu screen pops up
+                case 3:
+                case 4:
+                case 5:
+                case 6:
+                    //these keys are pressed means that the game is paused into the players menu
+                  if (prevKey.IsKeyUp(Keys.RightShift) && currentKey.IsKeyDown(Keys.RightShift))
+                    state = 2;
+                    break;
             }
-          
+           
             return state;
         }
 
@@ -240,17 +285,13 @@ namespace GaiaSequel
 
                     //drawing the menuscreen after the title menu
                 case 1:
-
-
-
                     sp.Draw(selectionScreen, new Vector2(-cam.transform.M41, -cam.transform.M42), Color.White);
                     sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + (cam.view.Width / 4) - 80, -cam.transform.M42 + (cam.view.Height / 2) - 120), newGameSource, Color.LightGray);
                     sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + (cam.view.Width / 4) - 80, -cam.transform.M42 + (cam.view.Height / 2) - 60), loadGameSource, Color.LightGray);
                     sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + (cam.view.Width / 4) - 80, -cam.transform.M42 + (cam.view.Height / 2)), optionsSource, Color.LightGray);
                     sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + (cam.view.Width / 4) - 80, -cam.transform.M42 + (cam.view.Height / 2) + 60), testRoomSource, Color.LightGray);
                     sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + (cam.view.Width / 4) - 120, -cam.transform.M42 + (cam.view.Height / 2) - 120 + fingerPositionY), fingerSource, Color.White);
-
-
+                   
                     return;
             }
 
@@ -290,9 +331,13 @@ namespace GaiaSequel
                 if (state == 2){
 
                     sp.Draw(playerMenu, new Vector2(-cam.transform.M41, -cam.transform.M42), Color.White);
+                    sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + 400 + fingerPosition2X, -cam.transform.M42 +20+ fingerPosition2Y),fingerSource,Color.White);
+                    sp.Draw(currentPlayer, new Vector2(-cam.transform.M41 + 110 - playerRectangle.Width/2, -cam.transform.M42+ 150 -playerRectangle.Height),playerRectangle,Color.White);
+                    sp.DrawString(font, menuData, new Vector2(-cam.transform.M41 + 80, -cam.transform.M42 + 215), Color.White);
 
                 }
-
+                
+                
 
 
             

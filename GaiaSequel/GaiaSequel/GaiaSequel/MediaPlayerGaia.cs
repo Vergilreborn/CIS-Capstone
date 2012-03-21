@@ -16,7 +16,7 @@ namespace GaiaSequel
     {
 
         String songPlaying;
-        String[] songs = new String[29];
+        String[] songs = new String[4];
         ContentManager conentInfo;
         public void init(ContentManager content){
 
@@ -33,8 +33,7 @@ namespace GaiaSequel
         }
         //This will only play the new song if the current song is not playing
         public void playNew(int song){
-            if (!songPlaying.Equals(songs[song]))
-            {
+            if (!songPlaying.Equals(songs[song])) {
                 MediaPlayer.Play(conentInfo.Load<Song>("Music/" + songs[song]));
                 songPlaying = songs[song];
             }

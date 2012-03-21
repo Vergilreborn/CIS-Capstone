@@ -9,11 +9,19 @@ namespace GaiaSequel
 {
     class CollisionFunctions
     {
+        //checking to see if the bounding box of attack hits the enemy
+        public bool attackingOtherHit(Rectangle oneAttacking,int attackRange ,int attackingDir, Rectangle beingAttacked){
+            //returns true of the attack suceeeds in hiting the player in the correct direction
+            switch (attackingDir)
+            {
+                case 0: return new Rectangle(oneAttacking.X , oneAttacking.Y + oneAttacking.Height/2 ,oneAttacking.Width,attackRange*2).Intersects(beingAttacked);
+                case 1: return new Rectangle(oneAttacking.X + oneAttacking.Width/2, oneAttacking.Y ,attackRange*2,oneAttacking.Height).Intersects(beingAttacked);
+                case 2: return new Rectangle(oneAttacking.X + oneAttacking.Width / 2 - attackRange*2, oneAttacking.Y, attackRange * 2, oneAttacking.Height).Intersects(beingAttacked);
 
-        public CollisionFunctions()
-        {
-
+            }
+            return new Rectangle(oneAttacking.X , oneAttacking.Y+oneAttacking.Height/2 - attackRange*2, oneAttacking.Width,attackRange*2).Intersects(beingAttacked); 
         }
+
 
         //This detects if the object is intersecting the other object
         public bool intersection(Rectangle collision1, Rectangle collision2)

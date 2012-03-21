@@ -18,14 +18,18 @@ namespace GaiaSequel
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-       
+        CollisionFunctions colFunctions = new CollisionFunctions();
         //Declaring our variables
         MainPlayer player;
         AllGui allGui;
         Enemy skeleton;
         Enemy bat;
+        Enemy powerHitter;
+        Enemy lance;
+        Enemy[] enemyHolder = new Enemy[3];
         MapReader mapDesigner;
         SpriteFont informFont;
+        SpriteFont informFont2;
         Vector2 fontPosition;
         Vector2 center;
         Camera cam;
@@ -84,10 +88,12 @@ namespace GaiaSequel
 
           
             //Load the main player
-            player = new MainPlayer(Content.Load<Texture2D>("Sprites/Will"),Content.Load<Texture2D>("Sprites/freedan"), new Vector2(160, 120),64,84);
-            skeleton = new Enemy(10, 2, 3, new Vector2(60, 50), 72, 120, false, Content.Load<Texture2D>("Sprites/Enemy/Skeleton"),true,rand);
-            bat = new Enemy(10, 2, 3, new Vector2(70, 70), 80, 80, true, Content.Load<Texture2D>("Sprites/Enemy/Bat"),true,rand);
-          
+            player = new MainPlayer(Content.Load<Texture2D>("Sprites/Will"),Content.Load<Texture2D>("Sprites/WillAttackingSheet")
+                                     ,Content.Load<Texture2D>("Sprites/freedan"),null,new Vector2(160, 120),64,84);
+            skeleton = new Enemy(20, 5, 4, new Vector2(60, 50), 72, 120, false, Content.Load<Texture2D>("Sprites/Enemy/Skeleton"),true,rand,false);
+            bat = new Enemy(14,9, 3, new Vector2(70, 70), 80, 80, true, Content.Load<Texture2D>("Sprites/Enemy/Bat"),true,rand,false);
+            powerHitter= new Enemy(100, 20, 25, new Vector2(700, 300), 72, 120, false, Content.Load<Texture2D>("Sprites/Enemy/Skeleton"), true, rand,false);
+            lance = new Enemy(10, 10, 10, new Vector2(600, 200), 64, 64, false, Content.Load<Texture2D>("Sprites/NPC/NPCSheet"), true, rand,true);
             //startUpMapBuilder 
             mapDesigner = new MapReader(Content.Load<Texture2D>("Maps/GTILES32"));
             
@@ -97,6 +103,7 @@ namespace GaiaSequel
             
             //load font and set position
             informFont = Content.Load<SpriteFont>("Text2");
+            informFont2 = Content.Load<SpriteFont>("Text");
 
             
             mediaPlayer.init(Content);
@@ -110,29 +117,36 @@ namespace GaiaSequel
 
             //Connect the map to the main player and temporary enemies
             player.connectMap(mapDesigner,rand,soundPlayer);
-            skeleton.connectMap(mapDesigner);
-            bat.connectMap(mapDesigner);
+            skeleton.connectMap(mapDesigner,cam,soundPlayer);
+            bat.connectMap(mapDesigner,cam,soundPlayer);
+            powerHitter.connectMap(mapDesigner,cam,soundPlayer);
+            lance.connectMap(mapDesigner, cam,soundPlayer);
+            enemyHolder[0] = skeleton;
+            enemyHolder[1] = bat;
+            enemyHolder[2] = powerHitter;
 
             //sets the game state to opening screen
             //stats - '0' for title
             //        '1' for openingScreen
-            //        '2' for paused
-            //        '3' for menu
-            //        '4' for active
-            //        '5' for load/save screen
-            //        '6' for video playing 
+            //        '2' for player menu
             gameState = 0;
-
+            lance.addText("Hello there, this is just a test to make sure that NPC is ");
+            lance.addText("working correctly. This is another test run because ");
+            lance.addText("we will be reading line by line or max characters. Not ");
+            lance.addText("100% sure what will be done with this yet");
+            lance.color = Color.LightGreen;
+            lance.textBox = Content.Load<Texture2D>("Sprites/Gui/TextBox");
             //sets up the Hud and all the graphics any menu
             allGui = new AllGui(cam, player, Content.Load<Texture2D>("Sprites/Gui/PlayerGui")
-                                                                            , Content.Load<Texture2D>("Sprites/Gui/Transformation2")
-                                                                            , Content.Load<Texture2D>("Sprites/Gui/characters2"),
-                                                                            Content.Load<Texture2D>("Sprites/Gui/TitleScreen"),
-                                                                            Content.Load<Texture2D>("Sprites/Gui/IntroScreenSetup")
-                                                                            , Content.Load<Texture2D>("Sprites/Gui/life")
-                                                                            , Content.Load<Texture2D>("Sprites/Gui/SelectionScreen"), 
-                                                                            Content.Load<Texture2D>("Sprites/Gui/PlayerMenu"));
-            allGui.connect(soundPlayer);
+                                                  , Content.Load<Texture2D>("Sprites/Gui/Transformation2")
+                                                  , Content.Load<Texture2D>("Sprites/Gui/characters2"),
+                                                  Content.Load<Texture2D>("Sprites/Gui/TitleScreen"),
+                                                  Content.Load<Texture2D>("Sprites/Gui/IntroScreenSetup")
+                                                  , Content.Load<Texture2D>("Sprites/Gui/life")
+                                                  , Content.Load<Texture2D>("Sprites/Gui/SelectionScreen"), 
+                                                  Content.Load<Texture2D>("Sprites/Gui/PlayerMenu"));
+
+            allGui.connect(soundPlayer,Content.Load<SpriteFont>("Text"));
             
             // TODO: use this.Content to load your game content here
         }
@@ -252,8 +266,11 @@ namespace GaiaSequel
             if (current.IsKeyDown(Keys.W) && prevState.IsKeyUp(Keys.W)){
                 skeleton.turnOffAi();
                 bat.turnOffAi();
+                powerHitter.turnOffAi();
+                lance.turnOffAi();
             }
-            
+
+          
             //Debugging purpose of controlling another enemy and player
             if (current.IsKeyDown(Keys.Tab) && prevState.IsKeyUp(Keys.Tab))
                 if (playerSwitch == 0){
@@ -265,51 +282,135 @@ namespace GaiaSequel
                     playerSwitch = 2;
                     cam.Follow(skeleton);
                 }
+                else if (playerSwitch == 2)
+                {
+                    playerSwitch = 3;
+                    cam.Follow(bat);
+
+                }
+                else if (playerSwitch == 3)
+                {
+                    playerSwitch = 4;
+                    cam.Follow(powerHitter);
+                }
                 else
                 {
                     playerSwitch = 0;
-                    cam.Follow(bat);
+                    cam.Follow(lance);
                 
                 }
 
 
-
+            //this loop runs if the game is active, play the hardcoded song for the mean time
             if (gameState != 0 && gameState != 1 && gameState !=2)
             {
                 mediaPlayer.playNew(1);
 
+                //If the game is not paused we continue the music and update all the characters on the screen
                 if (!paused)
                 {
+                    mediaPlayer.resume();
+
+
+                    if (current.IsKeyDown(Keys.D) && prevState.IsKeyUp(Keys.D))
+                    {
+                        if (player.NpcInFrontPlayer(lance) && !player.talking)
+                        {
+                            player.talking = true;
+                            lance.setTalkedTo(true);
+                            soundPlayer.playSound(5);
+                        }
+                        else{
+                            player.talking = false;
+                            lance.setTalkedTo(false);
+                        }
+                            
+                        
+                    }
+
 
                     if (playerSwitch == 1)
                     {
                         center = skeleton.center;
 
                         player.update(new KeyboardState(), gameTime);
-                        skeleton.update(current, gameTime, player.position);
-                        bat.update(new KeyboardState(), gameTime, player.position);
+                        skeleton.update(current, gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        bat.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        powerHitter.update(new KeyboardState(), gameTime,  new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
                     }
                     else if (playerSwitch == 0)
                     {
                         center = player.center;
                         player.update(current, gameTime);
-                        skeleton.update(new KeyboardState(), gameTime, player.position);
-                        bat.update(new KeyboardState(), gameTime, player.position);
+
+
+                        
+                        //We want to worry about footBoundingBoxForMovement and NOT the player position
+                        skeleton.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        bat.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        powerHitter.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                    }
+                    else if (playerSwitch == 2)
+                    {
+                        center = bat.center;
+                        bat.update(current, gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        skeleton.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        player.update(new KeyboardState(), gameTime);
+
+                    }
+                    else if (playerSwitch == 3)
+                    {
+                        center = powerHitter.center;
+                        powerHitter.update(current, gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        bat.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        skeleton.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        player.update(new KeyboardState(), gameTime);
+
                     }
                     else
                     {
-                        center = bat.center;
-                        bat.update(current, gameTime, player.position);
-                        skeleton.update(new KeyboardState(), gameTime, player.position);
-
+                        center = lance.center;
+                        lance.update(current, gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        powerHitter.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        bat.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        skeleton.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
                         player.update(new KeyboardState(), gameTime);
                     }
-
-                    if (current.IsKeyDown(Keys.RightShift) && prevState.IsKeyUp(Keys.RightShift))
-                        gameState = 2;
-
-                    
-
+                    if (player.talking)
+                    {
+                        lance.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                    }
+                    if (!player.hit)
+                        for (int i = 0; i < enemyHolder.Length; i++){
+                            if (colFunctions.attackingOtherHit(enemyHolder[i].footArea, 10, enemyHolder[i].walkDir, player.footArea))
+                            {
+                                if (player.defense < enemyHolder[i].str)
+                                    player.health = player.health - enemyHolder[i].str + player.defense;
+                                else
+                                    player.health--;
+                                
+                                player.getHit(enemyHolder[i].walkDir);
+                            }
+                        }
+                    if(player.attacking) 
+                        for(int i = 0; i < enemyHolder.Length; i++)
+                           
+                                if (!enemyHolder[i].hit)
+                                    if (colFunctions.attackingOtherHit(player.footArea, 30, player.walkDir, enemyHolder[i].footArea))
+                                    {
+                                        if (enemyHolder[i].def < player.strength)
+                                            enemyHolder[i].health = enemyHolder[i].health - player.strength + enemyHolder[i].def;
+                                        else
+                                            enemyHolder[i].health--;
+                                        enemyHolder[i].getHit(player.walkDir);
+                                    
+                            }
+                    for (int i = 0; i < enemyHolder.Length; i++)
+                        if (enemyHolder[i].done)
+                        {
+                            enemyHolder[i].destRect.X = -200;
+                            enemyHolder[i].destRect.Y = -200;
+                        }
 
 
 
@@ -372,13 +473,12 @@ namespace GaiaSequel
                     spriteBatch.Draw(t, player.footArea, Color.White);
 
                 }
-                if (!stats)
-                {
-                    spriteBatch.DrawString(informFont, player.simpleGui, new Vector2(fontPosition.X - 400, fontPosition.Y - 80), Color.Gold);
-                }
-                skeleton.draw(spriteBatch, GraphicsDevice, informFont);
-                spriteBatch.Draw(player.spriteSheet, player.destRect, player.sourceRect, Color.White);
+                powerHitter.draw(spriteBatch, GraphicsDevice, informFont);
+                 skeleton.draw(spriteBatch, GraphicsDevice, informFont);
+                player.Draw(spriteBatch);
                 bat.draw(spriteBatch, GraphicsDevice, informFont);
+                lance.draw(spriteBatch, GraphicsDevice, informFont2, lance.color);
+             
                 spriteBatch.DrawString(informFont, "FPS: " + fpsFont, new Vector2(fontPosition.X, fontPosition.Y - 40), Color.DarkRed);
             }
            

@@ -90,7 +90,7 @@ namespace GaiaSequel
             Vector2 objectPosition = source;
 
                 transform = Matrix.CreateTranslation(new Vector3(-objectPosition, 0)) *
-                Matrix.CreateTranslation(new Vector3(focusPoint.X, focusPoint.Y, 0));
+                         Matrix.CreateTranslation(new Vector3(focusPoint.X, focusPoint.Y, 0));
 
                
         }

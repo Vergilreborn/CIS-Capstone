@@ -107,7 +107,7 @@
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\freedan.xnb</Output>
-      <Time>2012-03-03T16:08:07.5413631-05:00</Time>
+      <Time>2012-03-09T11:49:26.0171539-05:00</Time>
     </Item>
     <Item>
       <Source>Sprites\Gui\SelectionScreen.png</Source>
@@ -134,7 +134,7 @@
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Text.xnb</Output>
-      <Time>2011-12-12T22:58:27.4062636-05:00</Time>
+      <Time>2012-03-16T10:32:25.9208751-04:00</Time>
     </Item>
     <Item>
       <Source>Text2.spritefont</Source>
@@ -221,6 +221,60 @@
       <Options>None</Options>
       <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\healthIncreaseSound.xnb</Output>
       <Time>2012-03-04T13:40:50.5429949-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sprites\WillAttackingSheet.png</Source>
+      <Name>Sprites\WillAttackingSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\WillAttackingSheet.xnb</Output>
+      <Time>2012-03-05T23:26:13.3689403-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\attackSoundWill.wav</Source>
+      <Name>Sounds\attackSoundWill</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\attackSoundWill.xnb</Output>
+      <Time>2012-03-05T23:29:33.8094049-05:00</Time>
+    </Item>
+    <Item>
+      <Source>Sprites\NPC\NPCSheet.png</Source>
+      <Name>Sprites\NPC\NPCSheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\NPC\NPCSheet.xnb</Output>
+      <Time>2012-03-16T12:13:57.8673145-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Sprites\Gui\TextBox.png</Source>
+      <Name>Sprites\Gui\TextBox</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\TextBox.xnb</Output>
+      <Time>2012-03-14T17:25:20.6346808-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\enemyHit.wav</Source>
+      <Name>Sounds\enemyHit</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\enemyHit.xnb</Output>
+      <Time>2012-03-17T12:49:24.075224-04:00</Time>
+    </Item>
+    <Item>
+      <Source>Sounds\talkingSound.wav</Source>
+      <Name>Sounds\talkingSound</Name>
+      <Importer>WavImporter</Importer>
+      <Processor>SoundEffectProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\talkingSound.xnb</Output>
+      <Time>2012-03-19T18:23:53.8850617-04:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>

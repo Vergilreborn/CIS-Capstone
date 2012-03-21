@@ -23,7 +23,7 @@ namespace GaiaSequel
         public int defense = 0;
         public int currEXP = 0;
         public int currLvl = 1;
-        public String simpleGui = "";
+        
 
         //Error Checking information
         public String posString = "";
@@ -35,7 +35,8 @@ namespace GaiaSequel
         public Vector2 resetPosition;
 
         //direction facing information
-        int walkDir = 0;
+        //Down= 0 Right= 1 Left= 2 Up= 3
+        public int walkDir = 0;
 
         //Jumping information
         float jumpYPosition; //Saves Y position when jumping
@@ -47,10 +48,17 @@ namespace GaiaSequel
         public bool jumping;
         public int climbing = -1;
         public bool freeFalling = true;
+        public bool hit = false;
+        bool dead = false;
+        bool done = false;
         bool touchingGround;
         bool jumpFalling = false;
         bool windBlowing = true;
         bool walking;
+        bool changed = false;
+        public bool talking = false;
+        public bool attacking = false;
+        
 
         //Animation times and frame counters
         float windTimer = 0f;
@@ -58,16 +66,23 @@ namespace GaiaSequel
         float jumpTimer = 0f;
         float climbTimer = 0f;
         float blinkingTimer = 0f;
+        float attackingTimer = 0f;
+        float hitTimer = 0f;
+        int currAttackingFrame = 0;
         int currJumpFrame = 0;
         int currWindFrame = 0;
         int currWalkFrame = 0;
         int currClimbFrame = 0;
-
         
+
+        //This holds the frames and the location of the data
+        //in for the sprite sheets
         int [] playerData;
+        int [] playerAttackingData;
 
         //The sprite sheet for Will (Main Character)
         public Texture2D spriteSheet;
+        public Texture2D attackingSheet;
 
         //Sprite information
         public Vector2 position;
@@ -92,6 +107,10 @@ namespace GaiaSequel
         //players,width and height
         public int width;
         public int height;
+        public int attackingWidth;
+        public int attackingHeight;
+        int backX = 0;
+        int backY = 0;
 
         //movement speed
         public float leftRightSpeed = 4f;
@@ -99,26 +118,37 @@ namespace GaiaSequel
 
         //MapReader
         MapReader mapDesign;
+        
+        //This is for the main random generator
         Random rand;
+
+        //The player's ID so if you are a character
+        //it is different than the otherone in terms
+        //of sprite sheet and data
         public int playerID;
 
         //Sounds Player
         SoundPlayerGaia soundsPlayer;
 
-        public MainPlayer(Texture2D will,Texture2D freedan, Vector2 position, int width, int height)
+        public MainPlayer(Texture2D will, Texture2D willAttacking,Texture2D freedan, Texture2D freedanAttacking, Vector2 position, int width, int height)
         {
             //Will width, 64,84
+            //Will Attacking 140,140
             //Freedan, 120,120
+            //Freedan Attacking unknown
             //set everything up
-
+            playerID = 1;
             this.spriteSheet = will;
             this.position = position;
             this.resetPosition = position;
             this.width = width;
             this.height = height;
+            this.attackingWidth = 140;
+            this.attackingHeight = 140;
             this.playerData = willData;
-            playerID = 1;
-            this.setTextures(will, freedan);
+            this.playerAttackingData = willAttackingData;
+            this.attackingSheet = willAttacking;
+            this.setTextures(will,willAttacking, freedan,freedanAttacking);
 
             //This shows where the rectangle is drawn (width = 64 height = 84)
             //twice times normal sprite size
@@ -127,6 +157,7 @@ namespace GaiaSequel
             //this is the rectangle to get info off the sprite sheet to show
             sourceRect = new Rectangle(0, 0, width, height);
 
+            //seeting the width and the height of the sprite
             width = destRect.Width;
             height = destRect.Height;
 
@@ -140,11 +171,10 @@ namespace GaiaSequel
         public void update(KeyboardState newState, GameTime time)
         {
 
-            simpleGui = "\nMaxHealth : " + maxHealth + "\nHealth: " + health + "\nMana: " + mana + "\nStr: " + strength
-                                + "\nDef: " + defense + "\nInt: " + intelligence + "\nLVL: " + currLvl + "\nExp: " + currEXP;
-
+          
             //beginning walking starts off
             walking = false;
+            //we will check if we are falling or climbing
             freeFalling = checkFreeFalling();
             climbing = checkClimbing(mapDesign.ladders);
 
@@ -158,11 +188,12 @@ namespace GaiaSequel
                                + "\nFeetWidth:" + footArea.Width;
 
 
+            if (talking){
+                return;
+            }
             //Get the dominate like if left is pressed first left is dominate
             //if there are 2 keys and both are different than before then first
             //in the array is the dominate key
-
-
             if (newState.GetPressedKeys().Length == 1 && onlyArrowsPressed(newState.GetPressedKeys()[0]))
             {
                 dominateKey = newState.GetPressedKeys()[0];
@@ -177,8 +208,23 @@ namespace GaiaSequel
             //inform of keys pressed
             jumpVectorString += " Dominate: " + dominateKey;
 
+            if (health > 0)
+            {
+                done = false;
+                dead = false;
+            }
+            else
+            {
+                health = 0;
+                dead = true;
+            }
 
-
+            if (done)
+                return;
+            if (dead == true){
+                done = playDeath(time);
+                return;
+            }
 
 
             //Debug button in case we move too far away from the 
@@ -202,22 +248,60 @@ namespace GaiaSequel
                     mapDesign.loadNext(1);
                 else
                     mapDesign.loadNext(0);
+            
+            
+            if (newState.IsKeyDown(Keys.X) && oldState.IsKeyUp(Keys.X)){
+                attacking = true;
+            }
 
 
 
+            //This plays if the player is hit and shows animation
+            if (hit){
+                hitTimer += time.ElapsedGameTime.Milliseconds;
 
-            if (climbing > -1 && !jumping)
-            {
-
-                
-                position.X = (position.X + (center.X - climbing -16));
-                if (newState.IsKeyDown(Keys.Up) && !newState.IsKeyDown(Keys.Down))
+                bounceBack(time); 
+                if (hitTimer > 1000)
+                { 
+                    hit = false;
+                    hitTimer = 0;
+                }
+               
+                if (backX > 0 || backY > 0)
                 {
+                    spriteMovement(new KeyboardState());
+                    oldState = newState;
+                    destRect.X = (int)position.X;
+                    destRect.Y = (int)position.Y;
+                    center = new Vector2(destRect.X + (width / 2), destRect.Y + (height / 2));
+                    footArea = new Rectangle((int)center.X - 14, (int)(position.Y + height) - 14, 26, 14);
+                    return;
+
+                }
+            }
+
+            //If the player is talking to an enemy don't animate
+            if (talking){
+                return;
+
+                //we are attacking so we need to change things appropriatly
+            }else if (attacking){
+                //we will update the action depending on the direction and do collisions with the enemy
+                attackUpdate(time, walkDir);
+              
+                oldState = newState;
+                return;
+            }
+            //if we are climbing and no jumping we will only be able to move up or down
+            //and through this we will play the correct climbing animation
+            else if (climbing > -1 && !jumping)
+            {
+   
+                position.X = (position.X + (center.X - climbing -16));
+                if (newState.IsKeyDown(Keys.Up) && !newState.IsKeyDown(Keys.Down)) {
                     position.Y -= upDownSpeed;
                     climbingAnimation(time);
-                }
-                else if (newState.IsKeyDown(Keys.Down) && !newState.IsKeyDown(Keys.Up))
-                {
+                }else if (newState.IsKeyDown(Keys.Down) && !newState.IsKeyDown(Keys.Up)){
                     position.Y += upDownSpeed;
                     climbingAnimation(time);
                 }
@@ -226,8 +310,7 @@ namespace GaiaSequel
                 //time to the freefalling calculation
                 //this is when we are falling and not falling from
                 //a jump
-            }
-            else if (freeFalling && !jumping)
+            }else if (freeFalling && !jumping)
                 position.Y += freeFallVelocity;
             else
             {
@@ -397,6 +480,8 @@ namespace GaiaSequel
             }
             sourceRect = new Rectangle((currWalkFrame * width) + (width * playerData[7]), height * direction, width, height);
         }
+
+        //blink animation but not understandable how it works yet. 
         public void blinking(GameTime time, int multiplier, int direction)
         {
             if (direction != 3)
@@ -700,11 +785,7 @@ namespace GaiaSequel
             }
 
 
-            //DEBUG purpose
-            jumpVectorString += "\n" + nsew[0].isUsed + " " + nsew[1].isUsed + " " +
-                                       nsew[2].isUsed + " " + nsew[3].isUsed + "\n" +
-                                       nsew[4].isUsed + " " + nsew[5].isUsed + " " +
-                                       nsew[6].isUsed + " " + nsew[7].isUsed;
+            
 
             //Returns the array with all the collisions around us, besides diagonal
             return nsew;
@@ -733,6 +814,8 @@ namespace GaiaSequel
         public void loadNewPlayer(int playerID){
             playerData = loadPlayer(playerID);
             spriteSheet = loadSheet(playerID);
+            attackingSheet = loadAttackingSheet(playerID);
+            playerAttackingData = loadAttackingData(playerID);
 
             //Save what we are at in the postion on the sprite sheet
             int xSource = sourceRect.X / width;
@@ -744,6 +827,8 @@ namespace GaiaSequel
             }else{
                 width = 64;
                 height = 84;
+                attackingWidth = 140;
+                attackingHeight = 140;
             }
             this.playerID = playerID;
 
@@ -756,8 +841,51 @@ namespace GaiaSequel
             position.Y = destRect.Y;
             update(new KeyboardState(), new GameTime());
         }
-        
-        
+
+        //If the player is attacking we will attacking in the right direction
+        //and since the player's sprite size is different for attacking
+        //we must accomadate that 
+        public void attackUpdate(GameTime timer, int directionFacing){
+            
+            attackingTimer += timer.ElapsedGameTime.Milliseconds;
+
+            //first frame of attacking so we need to set everything up
+            if (currAttackingFrame == 0 && !changed)
+            {
+                destRect.X = destRect.X + width / 2 - attackingWidth / 2;
+                destRect.Y = destRect.Y + height/2 - attackingHeight/2;
+                destRect.Width =  attackingWidth;
+                spriteSheet = attackingSheet;
+                sourceRect = new Rectangle(attackingWidth * currAttackingFrame, attackingHeight * directionFacing, attackingWidth, attackingHeight);
+                destRect.Height = attackingHeight;
+                changed = true;
+                
+            }
+
+            //The animation is done change back to regular width and height
+            if (currAttackingFrame == playerAttackingData[0]){
+                currAttackingFrame = 0;
+                destRect.Width = width;
+                destRect.Height = height;
+                destRect.X = destRect.X  - width/ 2 + attackingWidth / 2;
+                destRect.Y = destRect.Y - height/2 + attackingHeight/2;
+                changed = false;
+                attacking = false;
+                sourceRect = new Rectangle(0,0,width,height);
+                spriteSheet = loadSheet(playerID);
+                return;
+            }
+         
+            //do the animation of attacking and play the sound at the correct sound
+            if (attackingTimer > 25){
+               sourceRect = new Rectangle(attackingWidth * currAttackingFrame, attackingHeight * directionFacing, attackingWidth, attackingHeight);
+               if (currAttackingFrame == 2)
+                   soundsPlayer.playSound(3);
+                attackingTimer = 0;
+                ++currAttackingFrame;
+            }
+            
+        }
         
         //Level up checks to see if the player has the EXP to level up
         //and if it does it uses random to increase the stats
@@ -798,5 +926,94 @@ namespace GaiaSequel
 
         }
 
+
+        //Take damage and bounce back according to the direction
+        public void getHit(int dir){
+            
+               switch(dir){
+                   case 0: backY = 100; break;
+                   case 1: backX = 100; break;
+                   case 2: backX = -100; break;
+                   case 3: backY = -100; break;
+               }
+               hit = true;
+        }
+
+        //This is the freature that will make the character bounce back when taken 
+        public void bounceBack(GameTime time){
+            WallTile[] test = tilesNearPlayer(mapDesign.walls, footArea, 10, 10);
+            if (backX > 0)
+            {
+                if(!test[2].isUsed)
+                     position.X += 10;
+                backX -= 10;
+            }
+            else if (backX < 0)
+            {
+                if (!test[3].isUsed)
+                    position.X -= 10;
+                backX += 10;
+            }else  if (backY > 0)
+            {
+                if (!test[1].isUsed)
+                    position.Y += 10;
+                backY -= 10;
+            }
+            else if (backY < 0)
+            {
+                if (!test[0].isUsed)
+                     position.Y -= 10;
+                backY += 10;
+            }
+          
+        }
+
+        public bool playDeath(GameTime time){
+            return true;
+        }
+
+
+        //Draw the current sprite sheet the rectangle at which is should be drawn on the screen
+        //and then draw the right rectangle from the spritesheet with normal color
+        public void Draw(SpriteBatch sp)
+        {
+            if(hit && hitTimer != 0 && hitTimer%6 == 0)
+              sp.Draw(spriteSheet, destRect, sourceRect, Color.DarkRed);
+            
+            else if(!done)
+                sp.Draw(spriteSheet, destRect, sourceRect, Color.White);
+           
+           
+
+        }
+
+        //We will set the talking true if the player is indeed talking to an NPC
+        public bool talkingToNpc(List<Enemy> possibleNPC){
+            for(int i = 0; i < possibleNPC.Count;i++){
+                if(!possibleNPC[i].isNPC)
+                    continue;
+                if (NpcInFrontPlayer(possibleNPC[i])){
+                    possibleNPC[i].setTalkedTo(true);
+                    return true;
+
+                }
+            }
+            return false;
+        }
+
+        //Depending on the direction we will check to see if the npc is ahead of the player
+        public bool NpcInFrontPlayer(Enemy npc){
+
+            switch (walkDir)
+            {
+                case 0: return new Rectangle(footArea.X, footArea.Y + footArea.Height, footArea.Width, footArea.Height).Intersects(npc.footArea);
+                case 1: return new Rectangle(footArea.X + footArea.Width, footArea.Y, footArea.Width, footArea.Height).Intersects(npc.footArea);
+                case 2: return new Rectangle(footArea.X - footArea.Width, footArea.Y, footArea.Width, footArea.Height).Intersects(npc.footArea);
+            }
+            return new Rectangle(footArea.X, footArea.Y - footArea.Height, footArea.Width, footArea.Height).Intersects(npc.footArea);
+
+        }
     }
+    
+
 }
