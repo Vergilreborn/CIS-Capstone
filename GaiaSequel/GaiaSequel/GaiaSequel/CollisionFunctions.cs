@@ -33,23 +33,23 @@ namespace GaiaSequel
         public bool pastTop(Rectangle outside, Rectangle inside)
         {
 
-            return ((inside.Y + inside.Height - 12) < outside.Y) && (outside.X < inside.X && (outside.X + outside.Width) > inside.X);
+            return (inside.Y + inside.Height) < outside.Y;
 
         }
         //This tests to see if the object is passed bottom the one inside of it
         public bool pastBottom(Rectangle outside, Rectangle inside)
         {
-            return ((inside.Y + inside.Height) > (outside.Y + outside.Height - 6)) && (outside.X < inside.X && (outside.X + outside.Width) > inside.X);
+            return (inside.Y) > (outside.Y + outside.Height);
         }
         //This tests to see if the object is passed right the one inside of it
         public bool pastRight(Rectangle outside, Rectangle inside)
         {
-            return (inside.X + 20) > (outside.X + outside.Width);
+            return (inside.X ) > (outside.X + outside.Width);
         }
         //This tests to see if the object is passed left the one inside of it
         public bool pastLeft(Rectangle outside, Rectangle inside)
         {
-            return (inside.X + inside.Width - 20) < outside.X;
+            return (inside.X + inside.Width) < outside.X;
         }
         //Calculates the rectangle ahead depending on the movement speed given by y and x
         //and then returns it.
@@ -57,6 +57,14 @@ namespace GaiaSequel
         {
             return new Rectangle((int)position.X + x, (int)position.Y + y, spriteRect.Width, spriteRect.Height);
         }
-        
+
+
+        //Checks to see if the "inside" rectangle is inside the bigger one
+        public bool insideRect(Rectangle bigger, Rectangle inside)
+        {
+            return (inside.X >= bigger.X && (bigger.X + bigger.Width) >= (inside.Width + inside.X) &&
+                inside.Y >= bigger.Y && (bigger.Y + bigger.Height) >= (inside.Height + inside.Y)) ;
+
+        }
     }
 }

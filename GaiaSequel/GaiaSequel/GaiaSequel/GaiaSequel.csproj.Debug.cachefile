@@ -28,6 +28,7 @@ Content\Sprites\NPC\NPCSheet.xnb
 Content\Sprites\Gui\TextBox.xnb
 Content\Sounds\enemyHit.xnb
 Content\Sounds\talkingSound.xnb
+Content\Sprites\Gui\transitionBackground.xnb
 Content\Music\SouthCape.wma
 Content\Music\Reversion.wma
 Content\Music\Intro.wma
@@ -35,3 +36,4 @@ Content\Music\MapOfTheWorld.wma
 Content\Music\WillsDream.wma
 Content\Maps\level0.gmaps
 Content\Maps\level1.gmaps
+Content\Maps\level2.gmaps

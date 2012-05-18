@@ -731,10 +731,10 @@ namespace GaiaSequel
             
 
             //We draw a box around the foot area
-            var t = new Texture2D(g, 1, 1);
-            t.SetData(new[] { Color.White });
-            sp.DrawString(informFont, enemyString, new Vector2(center.X + 50, center.Y - 40), Color.Red);
-            sp.Draw(t, footArea, Color.White);
+            //    var t = new Texture2D(g, 1, 1);
+            //   t.SetData(new[] { Color.White });
+            //  sp.DrawString(informFont, enemyString, new Vector2(center.X + 50, center.Y - 40), Color.Red);
+            // sp.Draw(t, footArea, Color.White);
         
             if (hit && hitTimer != 0 && hitTimer % 6 == 0)
                 sp.Draw(sprite, destRect, sourceRect, Color.DarkRed);
@@ -749,10 +749,10 @@ namespace GaiaSequel
         public void draw(SpriteBatch sp, GraphicsDevice g, SpriteFont informFont, Color color)
         {
 
-            var t = new Texture2D(g, 1, 1);
-            t.SetData(new[] { Color.White });
-            sp.DrawString(informFont, enemyString, new Vector2(center.X + 50, center.Y - 40), Color.Red);
-            sp.Draw(t, footArea, Color.White);
+          //  var t = new Texture2D(g, 1, 1);
+          //  t.SetData(new[] { Color.White });
+          //  sp.DrawString(informFont, enemyString, new Vector2(center.X + 50, center.Y - 40), Color.Red);
+          //  sp.Draw(t, footArea, Color.White);
             sp.Draw(sprite, destRect, sourceRect, Color.White);
 
 

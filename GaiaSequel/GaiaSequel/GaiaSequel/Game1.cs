@@ -41,9 +41,9 @@ namespace GaiaSequel
         
         KeyboardState prevState = Keyboard.GetState();
 
-        bool hidePrint = false;
+        bool hidePrint = true;
         bool hideMap = false;
-        bool normal = false;
+        bool normal = true;
         bool stats = false;
         bool paused = false;
         bool needDarkBack = false;
@@ -80,6 +80,7 @@ namespace GaiaSequel
         /// </summary>
         protected override void LoadContent()
         {
+            
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             rand = new Random();
@@ -96,13 +97,12 @@ namespace GaiaSequel
             lance = new Enemy(10, 10, 10, new Vector2(600, 200), 64, 64, false, Content.Load<Texture2D>("Sprites/NPC/NPCSheet"), true, rand,true);
             //startUpMapBuilder 
             mapDesigner = new MapReader(Content.Load<Texture2D>("Maps/GTILES32"));
-            
             //This tells the camera to follow the player as well as setting up the camera
             cam = new Camera(graphics.GraphicsDevice.Viewport, Vector2.Zero);
             cam.Follow(player); 
             
             //load font and set position
-            informFont = Content.Load<SpriteFont>("Text2");
+            informFont = Content.Load <SpriteFont>("Text2");
             informFont2 = Content.Load<SpriteFont>("Text");
 
             
@@ -144,9 +144,10 @@ namespace GaiaSequel
                                                   Content.Load<Texture2D>("Sprites/Gui/IntroScreenSetup")
                                                   , Content.Load<Texture2D>("Sprites/Gui/life")
                                                   , Content.Load<Texture2D>("Sprites/Gui/SelectionScreen"), 
-                                                  Content.Load<Texture2D>("Sprites/Gui/PlayerMenu"));
+                                                  Content.Load<Texture2D>("Sprites/Gui/PlayerMenu")
+                                                  ,Content.Load<Texture2D>("Sprites/Gui/transitionBackground"));
 
-            allGui.connect(soundPlayer,Content.Load<SpriteFont>("Text"));
+            allGui.connect(soundPlayer,Content.Load<SpriteFont>("Text"),mapDesigner);
             
             // TODO: use this.Content to load your game content here
         }
@@ -262,6 +263,9 @@ namespace GaiaSequel
             if (current.IsKeyDown(Keys.Q) && prevState.IsKeyUp(Keys.Q))
                 player.levelUp();
 
+            if (current.IsKeyDown(Keys.D0) && prevState.IsKeyUp(Keys.D0))
+                player.maxAll();
+
             //turns of the enemies simple AI
             if (current.IsKeyDown(Keys.W) && prevState.IsKeyUp(Keys.W)){
                 skeleton.turnOffAi();
@@ -270,6 +274,17 @@ namespace GaiaSequel
                 lance.turnOffAi();
             }
 
+
+            //load next map
+            if (current.IsKeyDown(Keys.T) && prevState.IsKeyUp(Keys.T)){
+                gameState = 7;
+                if (mapDesigner.currentLvl == 0){
+                    mapDesigner.loadNext(1);
+
+                }else{
+                    mapDesigner.loadNext(0);
+                }
+            }
           
             //Debugging purpose of controlling another enemy and player
             if (current.IsKeyDown(Keys.Tab) && prevState.IsKeyUp(Keys.Tab))
@@ -302,7 +317,7 @@ namespace GaiaSequel
 
 
             //this loop runs if the game is active, play the hardcoded song for the mean time
-            if (gameState != 0 && gameState != 1 && gameState !=2)
+            if (gameState != 0 && gameState != 1 && gameState != 2)
             {
                 mediaPlayer.playNew(1);
 
@@ -320,12 +335,13 @@ namespace GaiaSequel
                             lance.setTalkedTo(true);
                             soundPlayer.playSound(5);
                         }
-                        else{
+                        else
+                        {
                             player.talking = false;
                             lance.setTalkedTo(false);
                         }
-                            
-                        
+
+
                     }
 
 
@@ -336,7 +352,7 @@ namespace GaiaSequel
                         player.update(new KeyboardState(), gameTime);
                         skeleton.update(current, gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
                         bat.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
-                        powerHitter.update(new KeyboardState(), gameTime,  new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
+                        powerHitter.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
                     }
                     else if (playerSwitch == 0)
                     {
@@ -344,7 +360,7 @@ namespace GaiaSequel
                         player.update(current, gameTime);
 
 
-                        
+
                         //We want to worry about footBoundingBoxForMovement and NOT the player position
                         skeleton.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
                         bat.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
@@ -381,30 +397,31 @@ namespace GaiaSequel
                         lance.update(new KeyboardState(), gameTime, new Vector2(player.footArea.X + player.footArea.Width / 2, player.footArea.Y + player.footArea.Height / 2));
                     }
                     if (!player.hit)
-                        for (int i = 0; i < enemyHolder.Length; i++){
+                        for (int i = 0; i < enemyHolder.Length; i++)
+                        {
                             if (colFunctions.attackingOtherHit(enemyHolder[i].footArea, 10, enemyHolder[i].walkDir, player.footArea))
                             {
                                 if (player.defense < enemyHolder[i].str)
                                     player.health = player.health - enemyHolder[i].str + player.defense;
                                 else
                                     player.health--;
-                                
+
                                 player.getHit(enemyHolder[i].walkDir);
                             }
                         }
-                    if(player.attacking) 
-                        for(int i = 0; i < enemyHolder.Length; i++)
-                           
-                                if (!enemyHolder[i].hit)
-                                    if (colFunctions.attackingOtherHit(player.footArea, 30, player.walkDir, enemyHolder[i].footArea))
-                                    {
-                                        if (enemyHolder[i].def < player.strength)
-                                            enemyHolder[i].health = enemyHolder[i].health - player.strength + enemyHolder[i].def;
-                                        else
-                                            enemyHolder[i].health--;
-                                        enemyHolder[i].getHit(player.walkDir);
-                                    
-                            }
+                    if (player.attacking)
+                        for (int i = 0; i < enemyHolder.Length; i++)
+
+                            if (!enemyHolder[i].hit)
+                                if (colFunctions.attackingOtherHit(player.footArea, 30, player.walkDir, enemyHolder[i].footArea))
+                                {
+                                    if (enemyHolder[i].def < player.strength)
+                                        enemyHolder[i].health = enemyHolder[i].health - player.strength + enemyHolder[i].def;
+                                    else
+                                        enemyHolder[i].health--;
+                                    enemyHolder[i].getHit(player.walkDir);
+
+                                }
                     for (int i = 0; i < enemyHolder.Length; i++)
                         if (enemyHolder[i].done)
                         {
@@ -412,7 +429,10 @@ namespace GaiaSequel
                             enemyHolder[i].destRect.Y = -200;
                         }
 
-
+                    if (mapDesigner.getChange())
+                    {
+                        gameState = 7;
+                    }
 
                 }
                 else
@@ -422,6 +442,8 @@ namespace GaiaSequel
                 mediaPlayer.playNew(0);
             else if (gameState == 1)
                 mediaPlayer.playNew(2);
+            
+         
 
 
 
@@ -469,17 +491,24 @@ namespace GaiaSequel
                     spriteBatch.DrawString(informFont, player.groundString, new Vector2(fontPosition.X, fontPosition.Y + 20), Color.DarkRed);
                     spriteBatch.DrawString(informFont, player.jumpingString, new Vector2(fontPosition.X, fontPosition.Y + 40), Color.DarkRed);
                     spriteBatch.DrawString(informFont, player.jumpVectorString, new Vector2(fontPosition.X, fontPosition.Y + 60), Color.DarkRed);
-
+                    spriteBatch.DrawString(informFont, "FPS: " + fpsFont, new Vector2(fontPosition.X, fontPosition.Y - 40), Color.DarkRed);
+            
                     spriteBatch.Draw(t, player.footArea, Color.White);
 
                 }
+               
+                
                 powerHitter.draw(spriteBatch, GraphicsDevice, informFont);
                  skeleton.draw(spriteBatch, GraphicsDevice, informFont);
                 player.Draw(spriteBatch);
                 bat.draw(spriteBatch, GraphicsDevice, informFont);
                 lance.draw(spriteBatch, GraphicsDevice, informFont2, lance.color);
-             
-                spriteBatch.DrawString(informFont, "FPS: " + fpsFont, new Vector2(fontPosition.X, fontPosition.Y - 40), Color.DarkRed);
+                
+                  
+
+                
+
+
             }
            
            
@@ -488,8 +517,7 @@ namespace GaiaSequel
             allGui.Draw(spriteBatch);
 
             spriteBatch.End();
-            // TODO: Add your drawing code here
-
+           
             base.Draw(gameTime);
         }
     }

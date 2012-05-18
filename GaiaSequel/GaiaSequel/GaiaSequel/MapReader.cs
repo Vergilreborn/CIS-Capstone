@@ -16,7 +16,6 @@ namespace GaiaSequel
     class MapReader
     {
 
-
         //String path
         String path = "";
 
@@ -27,6 +26,7 @@ namespace GaiaSequel
         public List<WallTile> walls;
         public List<EmptyTile> nothing;
         public List<StairTile> stairs;
+        public List<NewMapTile> nextMap;
         
         //Map Size Variable (will be used for camera)
         int xMapSize = 0;
@@ -41,9 +41,13 @@ namespace GaiaSequel
         //The tiles texture pack
         Texture2D mapTiles;
 
+        //detects to change map with transition for ALLGUI CLASS
+        bool change;
+
         //A constuctor that loads the textures
         public MapReader(Texture2D mapTiles){
             this.mapTiles = mapTiles;
+            change = false;
         }
         //Initialize all the lists so we can add data to them
         //the data will be in forms of tiles and sorted by collision
@@ -54,6 +58,7 @@ namespace GaiaSequel
             this.water = new List<WaterTile>();
             this.ladders = new List<LadderTile>();
             this.stairs = new List<StairTile>();
+            this.nextMap = new List<NewMapTile>();
         }
 
         //This will construct the map according to the given
@@ -66,12 +71,20 @@ namespace GaiaSequel
 
             //Grab the line and make sure its for the "Map Tiles"
             String line = reader.ReadLine();
-
+            int next = 0;
             if (line.Equals("[MapTiles]")){
                 //get the map sizes
                 setSize(reader.ReadLine());
-                fillTileLists();
+                next = fillTileLists();
             }
+          
+            //loads the objects as in enemies...etc
+            if(next == 1)
+                checkObjects(reader);
+
+            //closes the file when we are finished
+            reader.Close();
+
         }
 
         //Load the new map
@@ -82,12 +95,22 @@ namespace GaiaSequel
             init();
             //Grab the line and make sure its for the "Map Tiles"
             String line = reader.ReadLine();
+            int next = 0;
 
+            //loads the map tiles
             if (line.Equals("[MapTiles]")){
                 //get the map sizes
                 setSize(reader.ReadLine());
-                fillTileLists();
+                next = fillTileLists();
             }
+
+            //checks to see if there are objects next
+            if(next == 1)
+                checkObjects(reader);
+            
+            //closes the file when we are finished
+            reader.Close();
+
 
         }
 
@@ -106,12 +129,18 @@ namespace GaiaSequel
         }
 
         //Fills the Lists with correct data
-        public void fillTileLists(){
+        public int fillTileLists(){
             //Checks to see if we are not at the end of the file
             while (reader.Peek() != -1){
 
+              
+
                 //Grab the line we peeked at
                 String line = reader.ReadLine();
+
+                if (line.Equals("[Objects]"))
+                    return 1;
+
                 //create array and store the data
                 String[] data = new String[5];
                 data = line.Split(',');
@@ -131,8 +160,44 @@ namespace GaiaSequel
                 }
 
             }
-            //closes the file when we are finished
-            reader.Close();
+            return 0;
+            
+        }
+
+        public void checkObjects(StreamReader reader)
+        {
+        
+
+            while (reader.Peek() != -1)
+            {
+                String line = reader.ReadLine();
+
+                //create array and store the data
+                String[] data = line.Split(',');
+
+                switch (data[0])
+                {
+                    case "lvl": nextMap.Add(new NewMapTile(data)); break;  
+
+                }
+                
+
+
+            }
+
+
+        }
+
+        //Change change
+        public void setChange()
+        {
+            change = !change;
+        }
+
+        //get to see if the map is changing
+        public bool getChange()
+        {
+            return change;   
         }
 
         //This will draw the tiles on the screen. Collision detection will

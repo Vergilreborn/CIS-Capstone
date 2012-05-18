@@ -15,7 +15,7 @@ namespace GaiaSequel
     class AllGui
     {
 
-
+        //The camera 
         Camera cam;
 
 
@@ -29,8 +29,11 @@ namespace GaiaSequel
         Texture2D life;
         Texture2D playerMenu;
         Texture2D selectionScreen;
+        Texture2D transBack;
         Rectangle sourceRect;
 
+        //Transition color
+        Color transColor;
 
         //TitleScreen
         Rectangle pressEnterTextSource;
@@ -46,10 +49,13 @@ namespace GaiaSequel
         Rectangle playerRectangle = new Rectangle(0, 0, 0, 0);
       
         float flashingText = 0f;
+        float transitionTimer = 0f;
         SpriteFont font;
         Texture2D currentPlayer;
     
         bool textOn = true;
+        bool transDone = false;
+        bool transDark = true;
         int health = 0;
         int maxHealth = 0;
         int mana = 0;
@@ -68,10 +74,11 @@ namespace GaiaSequel
         int state = -1;
 
         SoundPlayerGaia sounds;
+        MapReader map;
 
         public AllGui(Camera cam, MainPlayer will, Texture2D hud, Texture2D trans, Texture2D charactersForHud
                                                                    , Texture2D titleScreen, Texture2D menuScreen, Texture2D life
-                                                                   , Texture2D selectionScreen, Texture2D playerMenu)
+                                                                   , Texture2D selectionScreen, Texture2D playerMenu,Texture2D transBack)
         {
             //initiate the camera and the position, place texture and have title screen and menu 
             this.life = life;
@@ -83,6 +90,7 @@ namespace GaiaSequel
             this.menuStuff = menuScreen;
             this.selectionScreen = selectionScreen;
             this.playerMenu = playerMenu;
+            this.transBack = transBack;
           
 
             //This is the source rectangle to do the transformation animations
@@ -99,9 +107,10 @@ namespace GaiaSequel
             testRoomSource = new Rectangle(18, 176, 192, 48);
         }
         //we connect the sounds of menues and the font to this class file
-        public void connect(SoundPlayerGaia sounds, SpriteFont font){
+        public void connect(SoundPlayerGaia sounds, SpriteFont font, MapReader map){
             this.sounds = sounds;
             this.font = font;
+            this.map = map;
             font.LineSpacing = 39;
         }
 
@@ -227,6 +236,7 @@ namespace GaiaSequel
                     //We unpause the game and move to the next available gamestate
                     if (prevKey.IsKeyUp(Keys.RightShift) && currentKey.IsKeyDown(Keys.RightShift))
                         state = 3;
+
                     //Change what the character looks like on the sprite sheet making sure its the standing still image
                     if(!player.attacking)
                         currentPlayer = player.spriteSheet;
@@ -243,9 +253,48 @@ namespace GaiaSequel
                   if (prevKey.IsKeyUp(Keys.RightShift) && currentKey.IsKeyDown(Keys.RightShift))
                     state = 2;
                     break;
+                case 7:
+                    //do transitions
+                    if (!transitionDone()){
+                        transition(time);
+                    }else{
+                        transDone = false;
+                        map.setChange();
+                        state = 3;
+                    }
+                    break;
             }
            
             return state;
+        }
+
+        public void transition(GameTime time){
+           //add to time and check to see if we are transition up or down
+            //change the alpha accordingly to transition
+            transitionTimer += time.ElapsedGameTime.Milliseconds;
+            if (transitionTimer > 30f){
+                if (transDark)
+                {
+                    transColor.A = (byte)(transColor.A + 20);
+                    if (transColor.A == 240)
+                        transDark = false;
+                }else{
+                    transColor.A = (byte)(transColor.A - 20);
+                    if (transColor.A < 20)
+                    {
+                        transDark = true;
+                        transDone = true;
+                    }
+
+                }
+                transitionTimer = 0f;
+            }
+
+        }
+
+        public bool transitionDone(){
+            return transDone;
+
         }
 
         //The animation timer and changing of the sprite occurs here
@@ -293,6 +342,9 @@ namespace GaiaSequel
                     sp.Draw(menuStuff, new Vector2(-cam.transform.M41 + (cam.view.Width / 4) - 120, -cam.transform.M42 + (cam.view.Height / 2) - 120 + fingerPositionY), fingerSource, Color.White);
                    
                     return;
+                case 7:
+                        sp.Draw(transBack,new Vector2(-cam.transform.M41, -cam.transform.M42), transColor);
+                        break;
             }
 
 
@@ -337,12 +389,6 @@ namespace GaiaSequel
 
                 }
                 
-                
-
-
-            
-
-
         }
     }
     

@@ -276,6 +276,15 @@
       <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sounds\talkingSound.xnb</Output>
       <Time>2012-03-19T18:23:53.8850617-04:00</Time>
     </Item>
+    <Item>
+      <Source>Sprites\Gui\transitionBackground.png</Source>
+      <Name>Sprites\Gui\transitionBackground</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Users\Alexander\documents\visual studio 2010\Projects\GaiaSequel\GaiaSequel\GaiaSequel\bin\x86\Debug\Content\Sprites\Gui\transitionBackground.xnb</Output>
+      <Time>2012-04-29T13:16:42.4325497-04:00</Time>
+    </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>

@@ -15,7 +15,7 @@ namespace GaiaSequel
     class WallTile:Tile
     {
 
-        CollisionFunctions cF = new CollisionFunctions();
+       
         public bool isUsed;
 
         public WallTile(){

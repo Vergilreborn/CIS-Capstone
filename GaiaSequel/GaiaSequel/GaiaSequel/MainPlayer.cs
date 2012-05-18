@@ -68,6 +68,7 @@ namespace GaiaSequel
         float blinkingTimer = 0f;
         float attackingTimer = 0f;
         float hitTimer = 0f;
+        float levelChangeTimer = 0f;
         int currAttackingFrame = 0;
         int currJumpFrame = 0;
         int currWindFrame = 0;
@@ -130,6 +131,12 @@ namespace GaiaSequel
         //Sounds Player
         SoundPlayerGaia soundsPlayer;
 
+        //Collisions that is used for detecting player location
+        CollisionFunctions cf = new CollisionFunctions();
+
+        //Hold on to map before transition
+        NewMapTile nextMap;
+
         public MainPlayer(Texture2D will, Texture2D willAttacking,Texture2D freedan, Texture2D freedanAttacking, Vector2 position, int width, int height)
         {
             //Will width, 64,84
@@ -178,15 +185,66 @@ namespace GaiaSequel
             freeFalling = checkFreeFalling();
             climbing = checkClimbing(mapDesign.ladders);
 
-
-
             //Error checking for the sprite
             posString = "Pos:(" + destRect.X + "," + destRect.Y + ") Sav:(" + savedPosition.X + "," + savedPosition.Y + ")";
             groundString = "On ground: " + touchingGround;
             jumpingString = "Jumping: " + jumping + "  JumpHeight: " + jumpHeight;
             jumpVectorString = "Position: " + jumpYPosition + "\nJumpFrame:" + currJumpFrame + "\nClimbing:" + climbing
                                + "\nFeetWidth:" + footArea.Width;
+            if (mapDesign.nextMap.Count > 0)
+            {
+                NewMapTile cd = mapDesign.nextMap[0];
+                jumpVectorString += "\nUDLR " + cd.getNextLvlPos() + "\n";
+            }
 
+
+
+            //Debug button in case we move too far away from the 
+            //map or we begin to glitch
+            if (newState.IsKeyDown(Keys.R) && oldState.IsKeyUp(Keys.R))
+            {
+                position = resetPosition;
+                jumpYPosition = (int)position.Y;
+            }
+
+            //Button to turn the wind off
+            if (newState.IsKeyDown(Keys.E) && oldState.IsKeyUp(Keys.E))
+                if (windBlowing)
+                    windBlowing = false;
+                else
+                    windBlowing = true;
+
+
+
+            if (freeFalling && !jumping && climbing < 0)
+            {
+                fallingAnimation(time, walkDir);
+                position.Y += freeFallVelocity;
+                jumpVectorString += "\nFALLIIIINNNGGG";
+                destRect.X = (int)position.X;
+                destRect.Y = (int)position.Y;
+
+                center = new Vector2(destRect.X + (width / 2), destRect.Y + (height / 2));
+                oldState = newState;
+
+                footArea = new Rectangle((int)center.X - 14, (int)(position.Y + height) - 14, 26, 14);
+                return;
+
+            }
+           
+
+            
+           
+            //check to see if we stepped inside the levelchange area. 
+            if(levelChange()){
+                changeLevel(time);
+                center = new Vector2(destRect.X + (width / 2), destRect.Y + (height / 2));
+                oldState = newState;
+                position.X = destRect.X;
+                position.Y = destRect.Y;
+                footArea = new Rectangle((int)center.X - 14, (int)(position.Y + height) - 14, 26, 14);
+                return;
+            }
 
             if (talking){
                 return;
@@ -221,33 +279,14 @@ namespace GaiaSequel
 
             if (done)
                 return;
-            if (dead == true){
+
+            if (dead){
                 done = playDeath(time);
                 return;
             }
 
 
-            //Debug button in case we move too far away from the 
-            //map or we begin to glitch
-            if (newState.IsKeyDown(Keys.R) && oldState.IsKeyUp(Keys.R))
-            {
-                position = resetPosition;
-                jumpYPosition = (int)position.Y;
-            }
 
-            //Button to turn the wind off
-            if (newState.IsKeyDown(Keys.E) && oldState.IsKeyUp(Keys.E))
-                if (windBlowing)
-                    windBlowing = false;
-                else
-                    windBlowing = true;
-
-            //load next map
-            if (newState.IsKeyDown(Keys.T) && oldState.IsKeyUp(Keys.T))
-                if (mapDesign.currentLvl == 0)
-                    mapDesign.loadNext(1);
-                else
-                    mapDesign.loadNext(0);
             
             
             if (newState.IsKeyDown(Keys.X) && oldState.IsKeyUp(Keys.X)){
@@ -286,10 +325,13 @@ namespace GaiaSequel
 
                 //we are attacking so we need to change things appropriatly
             }else if (attacking){
+                                
                 //we will update the action depending on the direction and do collisions with the enemy
                 attackUpdate(time, walkDir);
-              
                 oldState = newState;
+
+
+              
                 return;
             }
             //if we are climbing and no jumping we will only be able to move up or down
@@ -298,6 +340,7 @@ namespace GaiaSequel
             {
    
                 position.X = (position.X + (center.X - climbing -16));
+                
                 if (newState.IsKeyDown(Keys.Up) && !newState.IsKeyDown(Keys.Down)) {
                     position.Y -= upDownSpeed;
                     climbingAnimation(time);
@@ -306,12 +349,7 @@ namespace GaiaSequel
                     climbingAnimation(time);
                 }
 
-
-                //time to the freefalling calculation
-                //this is when we are falling and not falling from
-                //a jump
-            }else if (freeFalling && !jumping)
-                position.Y += freeFallVelocity;
+            }
             else
             {
 
@@ -336,7 +374,7 @@ namespace GaiaSequel
                 else
                 {
                     currWalkFrame = 0;
-                    sourceRect = new Rectangle(0, height* walkDir, width, height);
+                    sourceRect = new Rectangle(0, height * walkDir, width, height);
 
                 }
 
@@ -355,7 +393,8 @@ namespace GaiaSequel
                     //check to see if we are on the ground and apply smooth landing
                     if (jumpFalling)
                         touchingGround = onGround(jumpYPosition, position.Y);
-                }
+
+                }     
                 else
                     currJumpFrame = 0;
 
@@ -369,7 +408,7 @@ namespace GaiaSequel
                         touchingGround = false;
                         jumpYPosition = position.Y;
                         jumpHeight = -9;
-                      
+
                     }
 
             }
@@ -422,6 +461,22 @@ namespace GaiaSequel
             sourceRect = new Rectangle(currWindFrame * width, height* direction, width, height);
         }
 
+        //Falling animation
+        public void fallingAnimation(GameTime timer, int direction){
+            if (currJumpFrame == 0 || currJumpFrame == 1 || currJumpFrame == 2)
+                currJumpFrame = 2;
+            jumpTimer += (float)timer.ElapsedGameTime.Milliseconds;
+            if (jumpTimer > 60f)
+            {
+                currJumpFrame++;
+                if (currJumpFrame > 4)
+                    currJumpFrame = 3;
+                jumpTimer = 0f;
+            }
+            sourceRect = new Rectangle((currJumpFrame * width) + (playerData[4] * width), height * direction, width, height);
+
+        }
+
 
         //This iss to play the jumping animation
         public void jumpingAnimation(GameTime timer, int direction)
@@ -431,7 +486,7 @@ namespace GaiaSequel
             {
                 currJumpFrame++;
 
-                if (this.jumpYPosition - this.position.Y < 40)
+                if (this.jumpYPosition - this.position.Y < 40 && this.jumpYPosition - this.position.Y > 0)
                 {
                     if (this.jumpYPosition - this.position.Y > 28)
                         currJumpFrame = 1;
@@ -443,6 +498,7 @@ namespace GaiaSequel
                 {
                     currJumpFrame = 2;
                 }
+             
                 jumpTimer = 0;
             }
             sourceRect = new Rectangle((currJumpFrame * width) + (playerData[4] * width), height * direction, width, height);
@@ -898,16 +954,18 @@ namespace GaiaSequel
                 //we level things up randomly
                 if (currEXP >= 100)
                 {
-                    if (maxMana < 52){
+                    if (maxMana < 52)
+                    {
                         int add = (int)(rand.Next(0, 2));
                         maxMana += add;
-                        mana+= add;
+                        mana += add;
                         if (maxMana > 52)
                             maxMana = 52;
                     }
-                    if (maxHealth < 52){
+                    if (maxHealth < 52)
+                    {
                         int add = (int)(rand.Next(1, 2));
-                        maxHealth+= add;
+                        maxHealth += add;
                         health += add;
                         if (maxHealth > 52)
                             maxHealth = 52;
@@ -921,11 +979,19 @@ namespace GaiaSequel
             }
             else
                 currEXP = 0;
-
-
-
         }
-
+        //max everything
+        public void maxAll()
+        {   
+            maxHealth = health = mana = maxMana = 52;
+            intelligence = 50;
+            strength =50;
+            defense = 50;
+            currEXP = 0;
+            currLvl  = 100;
+            
+                
+        }
 
         //Take damage and bounce back according to the direction
         public void getHit(int dir){
@@ -1013,6 +1079,40 @@ namespace GaiaSequel
             return new Rectangle(footArea.X, footArea.Y - footArea.Height, footArea.Width, footArea.Height).Intersects(npc.footArea);
 
         }
+
+        //check to see if the player is inside of the movementBox
+        public bool levelChange()
+        {
+
+            foreach(NewMapTile t in mapDesign.nextMap){
+                if (cf.insideRect(t.destRect,footArea))
+                {
+                    nextMap = t;
+                    return true;
+
+                }
+            }
+            return false;
+        }
+
+        //Changes to the next Level
+        public void changeLevel(GameTime timer)
+        {
+          
+
+            levelChangeTimer += timer.ElapsedGameTime.Milliseconds;
+            if (levelChangeTimer > 50f)
+            {
+                destRect.X = (int)nextMap.getNextLvlPos().X * 32 - 10;
+                destRect.Y = (int)nextMap.getNextLvlPos().Y * 32 - 10;
+                mapDesign.loadNext(nextMap.getLevel());
+               
+                mapDesign.setChange();
+                levelChangeTimer = 0f;
+
+            }
+        }
+
     }
     
 
