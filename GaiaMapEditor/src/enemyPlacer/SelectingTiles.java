@@ -22,6 +22,8 @@ public class SelectingTiles extends JPanel{
 	Enemy currEn;
 	Npc currNpc;
 	Item currItem;
+	GObjects oList;
+	GObject currObj;
 	// Obj currObj;
 	boolean isEnemy = false;
 	boolean isNpc = false;
@@ -31,15 +33,17 @@ public class SelectingTiles extends JPanel{
 	
 	DefaultListModel list;
 	ArrayList <String> data;
+	SetInfo stats;
+	EnemyPlacerMain epm;
 	
 	
 	
-	
-	
-	public SelectingTiles(char imageType, Image items, Image enemies, Image NPC, Image objects, Enemies enm, Items itms,Npcs npcs){
+	public SelectingTiles(char imageType, Image items, Image enemies, Image NPC, Image objects, Enemies enm, Items itms,Npcs npcs,GObjects g, EnemyPlacerMain epm){
+		this.epm = epm;
 		iList = itms;
 		eList = enm;
 		npcList = npcs;
+		oList = g;
 		this.items = items;
 		this.enemies = enemies;
 		this.objects = objects;
@@ -101,6 +105,19 @@ public class SelectingTiles extends JPanel{
 								  validate();
 							  }
 						  break;
+						  
+			case 'o' : isObject= true;
+			   isEnemy = isNpc = isItem = false;
+			   currObj = oList.objs[itemNumber];
+			   for(int y = 0; y < display.length;y++)
+					  for(int x = 0; x < display[y].length;x++)
+						  display[y][x].setNull();
+				  for(int y = 0; y < currObj.height/16;y++)
+					  for(int x = 0; x < currObj.width/16;x++){
+						  display[y][x].convertPart(x,y , currObj);	
+						  validate();
+					  }
+				  break;
 					  
 		
 		}
@@ -108,31 +125,5 @@ public class SelectingTiles extends JPanel{
 		repaint(display[0][0].getLocation().x, display[0][0].getLocation().y,16*4,16*4);	
 	}
 	
-	public void connectList(DefaultListModel list,ArrayList<String> data){
-		this.data = data;
-		this.list = list;
-	}
-	
-	public int inputIntoList(Enemy en, int tilePosX,int tilePosY){
-		int id = 0;
-		return id;
-	
-	}
-	public int inputIntoList(Npc npc, int tilePosX,int tilePosY){
-		int id = 0;
-		return id;
-		
-	}
-	public int inputIntoList(Object obj, int tilePosX,int tilePosY){
-		int id = 0;
-		return id;
-	
-	}
-	public int inputIntoList(Item item, int tilePosX,int tilePosY){
-		int id = 0;
-		return id;
-		
-	}
-
 	
 }

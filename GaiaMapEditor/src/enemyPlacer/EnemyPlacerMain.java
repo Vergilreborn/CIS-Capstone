@@ -8,6 +8,7 @@ import java.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class EnemyPlacerMain extends JFrame{
 
@@ -28,7 +29,6 @@ public class EnemyPlacerMain extends JFrame{
 	//Global Variables
 	JPanel background;
 	JPanel mapHolding;
-	JPanel listHolding;
 	JPanel enemies;
 	JPanel items;
 	JPanel npc;
@@ -40,11 +40,13 @@ public class EnemyPlacerMain extends JFrame{
 	StandardButton loadMapOnly;
 	StandardButton loadMapWithEnemies;
 	StandardButton saveMapWithEnemies;
+	StandardButton helpButton;
 	SelectingTiles selector;
 	JList list;
 	Items itemSet;
 	Npcs npcSet;
 	Enemies enemySet;
+	GObjects objectSets;
 	ArrayList<String> data;
 	DefaultListModel listData;
 	MapTiles [][] mapTiles = new MapTiles[38][48];
@@ -53,6 +55,7 @@ public class EnemyPlacerMain extends JFrame{
 	JPanel itemEnemyNpc;
 	JTabbedPane tabs;
 	SetInfo dataBox;
+	Help help;
 	
 	public EnemyPlacerMain() throws Exception{
 		super("Enemy Placer v 1.0");
@@ -64,6 +67,7 @@ public class EnemyPlacerMain extends JFrame{
 		this.setResizable(false);
 		
 		
+		help = new Help("Enemies", new ImageIcon("Help2.png").getImage());
 		
 		fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Gaia Maps", "gmaps"));
@@ -80,11 +84,7 @@ public class EnemyPlacerMain extends JFrame{
 		mapHolding.setLocation(560,5);
 		mapHolding.setSize(48*16,38*16);
 	
-		listHolding = new JPanel();
-		listHolding.setBackground(background.getBackground());
-		listHolding.setLocation(new Point(4,400));
-		listHolding.setSize(270,212);
-		
+	
 		itemEnemyNpc = new JPanel(new GridLayout(1,1)); 
 		itemEnemyNpc.setBackground(background.getBackground());
 		itemEnemyNpc.setLocation(new Point(5,5));
@@ -94,6 +94,7 @@ public class EnemyPlacerMain extends JFrame{
 		enemySet = new Enemies(new ImageIcon("EnemiesUpdate.png").getImage());
 		itemSet = new Items(new ImageIcon("Items.png").getImage());	
 		npcSet = new Npcs(new ImageIcon("NPC.png").getImage());
+		objectSets = new GObjects(new ImageIcon("objs.png").getImage());
 		//Selecting
 				
 		
@@ -101,8 +102,8 @@ public class EnemyPlacerMain extends JFrame{
 										new ImageIcon("Items.png").getImage(),
 										new ImageIcon("EnemiesUpdate.png").getImage(),
 									    new ImageIcon("NPC.png").getImage(),
-										new ImageIcon("Objects").getImage(),
-										enemySet,itemSet,npcSet);
+										new ImageIcon("objs.png").getImage(),
+										enemySet,itemSet,npcSet,objectSets,this);
 		
 		
 		JLabel selectLabel = new JLabel("Selected");
@@ -111,10 +112,7 @@ public class EnemyPlacerMain extends JFrame{
 		selectLabel.setFont(new Font("Calibri",1,14));
 		selectLabel.setForeground(Color.red);
 		
-		selector.setBackground(new Color(255,255,255));
-		selector.setLocation(300,548);
-		selector.connectList(listData, data);
-		//selector.setBorder(BorderFactory.createLineBorder(new Color(0,0,0),2));
+	
 		
 		//Setting up the buttons
 		remove = new StandardButton("Remove");
@@ -137,6 +135,10 @@ public class EnemyPlacerMain extends JFrame{
 		saveMapWithEnemies.setLocation(555,630);
 		saveMapWithEnemies.setSize(110,25);
 		
+		helpButton = new StandardButton("HELP");
+		helpButton.setLocation(670,630);
+		helpButton.setSize(110,25);
+		
 		enemies = new JPanel();
 		enemies.setSize(itemEnemyNpc.getSize());
 		enemies.setLayout(null);
@@ -151,7 +153,7 @@ public class EnemyPlacerMain extends JFrame{
 		dataBox.npcAction.setVisible(false);
 		dataBox.objects.setVisible(false);
 		dataBox.enemyStats.setVisible(false);
-				
+		
 		npc = new JPanel();
 		npc.setSize(itemEnemyNpc.getSize());
 		npc.setLayout(null);
@@ -164,9 +166,16 @@ public class EnemyPlacerMain extends JFrame{
 		
 		//We need to design the "Map Tiles" to show the map
 		//we will also show the collision if the collision is checked
-		setUpWindows();
-		buttonConfiguration();
-		tabsFixUp();
+	
+		
+
+	
+		
+		
+		selector.setBackground(new Color(255,255,255));
+		selector.setLocation(300,548);
+		
+		
 		
 		//This designs the tabs with the certain
 		//JPanels and everything
@@ -204,10 +213,12 @@ public class EnemyPlacerMain extends JFrame{
 						break;
 				
 			}}});
-		
+		setUpWindows();
+		buttonConfiguration();
 		buildEnemies();
 		buildItems();
 		buildNpc();
+		buildObjects();
 		
 		itemEnemyNpc.add(tabs);
 		
@@ -221,8 +232,10 @@ public class EnemyPlacerMain extends JFrame{
 		background.add(loadMapOnly);
 		background.add(loadMapWithEnemies);
 		background.add(saveMapWithEnemies);
+		background.add(helpButton);
 		background.add(itemEnemyNpc);
-		background.add(listHolding);
+		//background.add(list);
+		//background.add(listHolding);
 		background.add(dataBox.enemyStats);
 		background.add(dataBox.npcAction);
 		background.add(dataBox.objects);
@@ -260,6 +273,20 @@ public class EnemyPlacerMain extends JFrame{
 		items.validate();
 	}
 	
+	public void buildObjects(){
+		
+	for(int i = 0; i < objectSets.objs.length; i++){
+			
+			objectSets.objs[i].setBorder(BorderFactory.createLineBorder(new Color(0,0,0),1));
+			objects.add(objectSets.objs[i]);
+			objectSets.objs[i].addMouse();
+			objectSets.objs[i].connect(selector);
+		}
+		objects.validate();
+		
+	
+	}
+	
 	public void buildEnemies(){
 
 		
@@ -289,13 +316,7 @@ public class EnemyPlacerMain extends JFrame{
 		
 	}
 	
-	public void tabsFixUp(){
 	
-		
-		
-
-		
-	}
 	public void setUpWindows(){
 		
 		//Initiate the Variables
@@ -303,14 +324,16 @@ public class EnemyPlacerMain extends JFrame{
 		data = new ArrayList<String>();
 		list = new JList(listData);
 		list.setBackground(new Color(240,240,240));
-		
+		list.setLocation(4,400);
+		list.setSize(270,212);
 		//Setting up the JList
 		list.setVisibleRowCount(14);
-		
 		//Add Scrollable Area
-		JScrollPane scrollBar = new JScrollPane(list, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-													JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		listHolding.add(scrollBar);
+		JScrollPane p = new JScrollPane(list);
+		p.setSize(list.getSize());
+		p.setLocation(list.getLocation());
+		background.add(p);
+		
 		
 		
 		//Setting up the main window and set everything as the null panels
@@ -326,8 +349,9 @@ public class EnemyPlacerMain extends JFrame{
 				mapTiles[y][x].connect(colTiles[y][x]);
 				tilesParts[y][x] = new Parts(x,y,new ImageIcon("Items.png").getImage(),
 											new ImageIcon("EnemiesUpdate.png").getImage(),
-											new ImageIcon("NPC.png").getImage()
-											,mapHolding);
+											new ImageIcon("NPC.png").getImage(),
+											new ImageIcon("objs.png").getImage(),
+											mapHolding,data,listData,dataBox);
 				tilesParts[y][x].connect(selector,tilesParts);
 				tilesParts[y][x].setLocation(16*x,16*y);
 				tilesParts[y][x].mouseFunction();
@@ -380,8 +404,18 @@ public class EnemyPlacerMain extends JFrame{
 		//saveWithEnemies;
 		saveMapWithEnemies.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
+				try {
+					fo.savingEnemiesObjectsItemsNpc(data);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				
 		}});
+		
+		helpButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				help.setVisible(true);
+			}});
 		
 	}
 	

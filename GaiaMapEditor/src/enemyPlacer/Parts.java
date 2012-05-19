@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.CropImageFilter;
 import java.awt.image.FilteredImageSource;
+import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -16,6 +17,7 @@ public class Parts extends JPanel {
 	Image enemies;
 	Image items;
 	Image npc;
+	Image obj;
 	SelectingTiles sT;
 	Parts [][] partsList;
 	int tileX;
@@ -29,8 +31,14 @@ public class Parts extends JPanel {
 	int spriteBlockWidth;
 	char type;
 	JPanel map;
+	ArrayList<String> data;
+	DefaultListModel list;
+	SetInfo stats;
 	
-	public Parts(int x, int y,Image items, Image enemies,Image npc,JPanel map){
+	public Parts(int x, int y,Image items, Image enemies,Image npc,Image objs,JPanel map,ArrayList<String> data,DefaultListModel list,SetInfo stats){
+		this.stats = stats;
+		this.list = list;
+		this.data = data;
 		this.map = map;
 		tileX = x;
 		tileY = y;
@@ -42,6 +50,7 @@ public class Parts extends JPanel {
 		this.enemies = enemies;
 		this.items = items;
 		this.npc = npc;
+		this.obj = objs;
 		this.setOpaque(false);
 	}
 	
@@ -106,7 +115,20 @@ public class Parts extends JPanel {
 		
 
 	}
-	
+	public void convertPart(int blockX, int blockY, GObject objs){
+		
+		int x = objs.x;
+		int y = objs.y;
+		
+		cropped = createImage(new FilteredImageSource(obj.getSource(),
+				   new CropImageFilter(x+(blockX*16),y+(blockY*16),16,16)));
+		
+		//this.update(getGraphics());
+		this.repaint(this.getLocation().x,this.getLocation().y,16,16);
+		this.update(getGraphics());
+		
+
+	}
 	public void setNull(){
 		
 		cropped = null;
@@ -141,7 +163,8 @@ public class Parts extends JPanel {
 				
 				switch(sT.currentSelection){
 				case 'e': 
-					
+						if(inputIntoList(sT.currEn,tileX,tileY)== -1)
+							break;
 						tileLength = sT.currEn.height/16;
 						tileWidth = sT.currEn.width/16;
 						
@@ -168,11 +191,13 @@ public class Parts extends JPanel {
 						
 						
 						partsList[tileY][tileX].setInfo('e',tileWidth,tileLength);//Hold the information into this sprite
-						sT.inputIntoList(sT.currEn,tileX,tileY);
+						
 						break;
 						
 						
 				case 'i':
+						if(inputIntoList(sT.currItem,tileX,tileY)== -1)
+						     return;
 						tileLength = sT.currItem.height/16;
 						tileWidth = sT.currItem.width/16;
 						if(tileX < tileWidth || tileY < tileLength)
@@ -191,10 +216,12 @@ public class Parts extends JPanel {
 						}
 						
 						partsList[tileY][tileX].setInfo('i',tileWidth,tileLength);//Hold the information into this sprite
-						sT.inputIntoList(sT.currItem,tileX,tileY);
+						
 						
 						break;
 				case 'n':
+						if(inputIntoList(sT.currNpc,tileX,tileY)==-1)
+							break;
 						tileLength = sT.currNpc.height/16;
 						tileWidth = sT.currNpc.width/16;
 						if(tileX < tileWidth || tileY < tileLength)
@@ -213,8 +240,31 @@ public class Parts extends JPanel {
 						}
 						
 						partsList[tileY][tileX].setInfo('i',tileWidth,tileLength);//Hold the information into this sprite
-						sT.inputIntoList(sT.currNpc,tileX,tileY);
+						
 						break;
+				case 'o':
+					if(inputIntoList(sT.currObj,tileX,tileY)==-1)
+						break;
+					tileLength = sT.currObj.height/16;
+					tileWidth = sT.currObj.width/16;
+					if(tileX < tileWidth || tileY < tileLength)
+						break;
+					for(int i = 0; i < tileWidth; i++){
+						for(int j = 0; j < tileLength; j++){
+							if(!partsList[tileY - j][tileX - i].isNull)
+								return;
+						}
+					}
+					
+					for(int i = 0; i < tileWidth; i++){
+						for(int j = 0; j < tileLength; j++){
+							partsList[tileY - j][tileX - i].convertPart(tileWidth-i-1,tileLength-j-1 , sT.currObj);
+						}
+					}
+					
+					partsList[tileY][tileX].setInfo('i',tileWidth,tileLength);//Hold the information into this sprite
+					
+					break;
 				
 				}
 				//--------- REFRESH  ---------//
@@ -225,6 +275,55 @@ public class Parts extends JPanel {
 				map.repaint();
 		}});
 	}
+	
+	
+	public int inputIntoList(Enemy en, int tilePosX,int tilePosY){
+		String test = stats.returnEnInfo();
+		String temp = en.toString() + "," +tilePosX + "," + tilePosY + "," + test;
+		
+		if(test.equals("NULL")|| data.contains((temp)))
+			return -1;
+		
+	
+		data.add(temp);
+		list.addElement(temp);		
+		return 0;
+	}
+	public int inputIntoList(Npc npc, int tilePosX,int tilePosY){
+		String test = stats.returnNPCInfo();
+		String npcInfo = npc.toString() +","+tilePosX + "," + tilePosY + ","+test;
+		System.out.println("We get here right?");
+		if(test.equals("NULL") || list.contains(npcInfo))
+			return -1;
+		data.add(npcInfo);
+		System.out.println("We get here right?");
+		list.addElement(npcInfo);
+		
+		return 0;
+		
+	}
+	public int inputIntoList(GObject obj, int tilePosX,int tilePosY){
+
+		String test = stats.returnObjInfo();
+		String objInfo = obj.toString() +","+tilePosX + "," + tilePosY + ","+ test; 
+		System.out.println(test);
+		System.out.println(objInfo);
+		if(test.equals("NULL") || list.contains(objInfo))
+			return -1;
+		data.add(objInfo);
+		list.addElement(objInfo);
+		return 0;
+	
+	}
+	public int inputIntoList(Item item, int tilePosX,int tilePosY){
+		String test = item.toString() + "," + tilePosX + "," + tilePosY;
+		if(list.contains(test))
+			return -1;
+		data.add(test);
+		list.addElement(test);
+		return 0;
+	}
+	
 	
 	public void paintComponent(Graphics g){
 		

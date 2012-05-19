@@ -80,5 +80,7 @@ public class Npc extends JPanel {
 		
 		g.drawImage(croppedImage, 0,0,null);
 	}
-
+	public String toString(){
+		return type +"," + x + "," + y;
+		}
 }

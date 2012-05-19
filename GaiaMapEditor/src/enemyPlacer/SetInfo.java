@@ -253,7 +253,7 @@ public class SetInfo{
 		mapName.setLocation(105,5);
 		mapName.setSize(80,20);
 		
-		position = new JTextField("Pos(X,Y)");
+		position = new JTextField("0,0");
 		position.setLocation(190,5);
 		position.setSize(80,20);
 				
@@ -301,5 +301,52 @@ public class SetInfo{
 		objects.add(chestItemList);
 		objects.add(passableTF);
 	}
+	
+	public String returnObjInfo(){
+		if(!checkIfNumber(mapName.getText()))
+				return "NULL";
+		return mapName.getText() + "," + position.getText()+ "," + (String)clickedTF.getSelectedItem() + "," + 
+						(String)itemPickUpList.getSelectedItem() + "," + (String)chestItemList.getSelectedItem() + ","
+						+  passableTF.getSelectedItem();
+						
+	
+	}
+	
+	public String returnEnInfo(){
+		
+		String hp = enHPBox.getText();
+		String str = enStrBox.getText();
+		String def = enDefBox.getText();
+		String exp = enExpBox.getText();
+		String itemChance = enChanceBox.getText();
+		String item = (String)enitemsList.getSelectedItem();
+	
+		if(!checkIfNumber(hp) || !checkIfNumber(str) || !checkIfNumber(def) ||
+				!checkIfNumber(exp) || !checkIfNumber(itemChance))
+			return "NULL";
+		return hp + "," + str + "," + def + "," + exp + "," + itemChance + "," + item;
+		
+	}
+	public boolean checkIfNumber(String data){
+		int x = 0;
+		if(data.charAt(0) == '-')
+			x = 1;
+		for(int i = x; i < data.length();i++){
+			if(data.charAt(i) <'0' || data.charAt(i)>'9')
+				return false;
+		}
+		return true;
+	}
+	
+	public String returnNPCInfo(){
+		//textForDialog;
+		if(npcNameText.getText().equals("Enter Text"))
+			return "NULL";
+		return npcNameText.getText()+","+ colorList.getSelectedItem() +"," + direction.getSelectedItem() + "," + itemList.getSelectedItem();
+
+	}
+	
+	
+	
 }
 

@@ -84,5 +84,8 @@ public class Enemy extends JPanel {
 		
 		g.drawImage(croppedImage, 0,0,null);
 	}
-
+	public String toString(){
+		return type + "," + x + "," + y + "," + width + "," + height; 
+		
+	}
 }

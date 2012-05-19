@@ -2,6 +2,9 @@ package enemyPlacer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -95,7 +98,7 @@ public class FileOptions {
 		}
 		position++;
 		String yS = "";
-		//while(position < size.length() && size.charAt(position) != ']'){
+		
 		while(position<size.length()){
 			yS += size.charAt(position);
 			position ++;
@@ -109,7 +112,19 @@ public class FileOptions {
 		loadTiles(sc, mapTiles,x,y,colTiles);
 		
 	}
+	
 
+	public void savingEnemiesObjectsItemsNpc(ArrayList<String> data) throws IOException{
+		FileWriter fW = new FileWriter(currFile,true);
+		System.out.println(data.size());
+		fW.write("[Objects]");
+		fW.write("\r\n");
+		for(int i = 0; i < data.size(); i++){
+			fW.write(data.get(i));
+			fW.write("\r\n");
+		}
+		fW.close();
+	}
 
 	
 	

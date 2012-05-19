@@ -40,6 +40,8 @@ public class MapMaker extends JFrame{
 	//The tile we have selected
 	SelectedTile selected;
 	
+	Help help;
+	
 	//Create instance of the map with the given name
 	public static void main(String [] args) throws Exception{
 		
@@ -74,13 +76,14 @@ public class MapMaker extends JFrame{
 		newBack.setBackground(new Color(0,0,0));
 		newBack.setLayout(null);
 		newBack.setLocation(5,5);
-		//initiate the filechooser 
-		
-		
+		//initiate the filechooser
 		
 		fileChooser = new JFileChooser();
 		fileChooser.setFileFilter(new FileNameExtensionFilter("Gaia Maps", "gmaps"));
 	
+		//Creates help button
+		help = new Help("Help",new ImageIcon("MapHelp.png").getImage());
+		
 		//building the working area and the feild
 		buildSpriteSheet();
 		
@@ -125,7 +128,7 @@ public class MapMaker extends JFrame{
 		clearAll.setLocation(new Point(300,660));
 		clearAll.setSize(100,25);
 		
-		StandardButton printStatement = new StandardButton("Tester");
+		StandardButton printStatement = new StandardButton("Help");
 		printStatement.setLocation(new Point(70,660));
 		printStatement.setSize(100,25);
 		
@@ -279,12 +282,7 @@ public class MapMaker extends JFrame{
 		//this is a tester that prints which tiles are not null.
 		printStatement.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				for(int y = 0; y < tableTiles.length; y++){
-					for(int x = 0; x < tableTiles[y].length; x++)
-						if(!tableTiles[y][x].isNull)
-							System.out.print(tableTiles[y][x].tile + " ");
-					System.out.println();
-					}
+				help.setVisible(true);
 		}});
 		
 		//creates the saving function
